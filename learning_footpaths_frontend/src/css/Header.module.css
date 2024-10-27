@@ -1,0 +1,13 @@
+.header {
+  background-color: white;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: black;
+  font-size: 24px;
+  padding: 0 20px;
+  margin: 0; /* Remove margins */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box shadow */
+}

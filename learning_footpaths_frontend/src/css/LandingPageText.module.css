@@ -1,0 +1,13 @@
+.LandingPageText {
+  font-size: 1.5em;
+  margin: 30px;
+  padding: 0;
+  text-align: left;
+  color: #000000;
+  font-family: "Roboto", sans-serif;
+}
+
+.LandingPageSubText {
+  color: grey;
+  margin-top: 0px;
+}
