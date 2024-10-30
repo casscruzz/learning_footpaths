@@ -1,4 +1,4 @@
-import styles from "../css/FootpathCards.module.css";
+import styles from "../../css/landing_page/FootpathCards.module.css";
 import FootpathCard from "./FootpathCard";
 export default function FootpathCards() {
   const footpaths = [
@@ -11,8 +11,8 @@ export default function FootpathCards() {
   ];
   return (
     <div className={styles.cardHolder}>
-      {footpaths.map((footpath, index) => (
-        <FootpathCard key={index} title={footpath} />
+      {footpaths.map((footpath) => (
+        <FootpathCard title={footpath} />
       ))}
     </div>
   );

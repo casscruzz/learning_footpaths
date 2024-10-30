@@ -1,0 +1,10 @@
+.progress_bar {
+  width: 100%;
+  background-color: #eee;
+}
+
+.progress_bar_completed {
+  height: 20px;
+  background-color: pink;
+  transition: width 0.5s ease-in-out;
+}

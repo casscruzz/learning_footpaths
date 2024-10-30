@@ -1,0 +1,24 @@
+.exhibition_card {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 16px; /* Space inside the card */
+  margin: 16px; /* Space outside the card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition for hover effect */
+  cursor: pointer; /* Pointer cursor to indicate it's clickable */
+  background-color: #fff; /* White background */
+}
+
+.exhibition_card:hover {
+  transform: translateY(-4px); /* Slight lift on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.exhibition_card h2 {
+  margin-top: 0; /* Remove default margin from the top */
+  font-size: 1.5em; /* Larger font size for the title */
+}
+
+.exhibition_card p {
+  color: #666; /* Gray color for the description text */
+}

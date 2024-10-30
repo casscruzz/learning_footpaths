@@ -1,16 +1,16 @@
 import { useState } from "react";
 import "./css/App.css";
 import Header from "./components/Header";
-import LandingPageText from "./components/LandingPageText";
-import FootpathCards from "./components/FootpathCards";
+import LandingPageComponent from "./components/landing_page/LandingPageComponent";
+import ExhibitPageComponent from "./components/exhibitions_page/ExhibitionPageComponent";
 
 function App() {
   // return
   return (
     <div>
       <Header />
-      <LandingPageText />
-      <FootpathCards />
+      <LandingPageComponent />
+      <ExhibitPageComponent />
     </div>
   );
 }

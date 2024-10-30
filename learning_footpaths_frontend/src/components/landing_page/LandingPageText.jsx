@@ -1,4 +1,6 @@
-import styles from "../css/LandingPageText.module.css";
+// import styles from "../css/landing_page/LandingPageText.module.css";
+import styles from "../../css/landing_page/LandingPageText.module.css";
+
 export default function LandingPageText() {
   return (
     <div className={styles.LandingPageText}>
