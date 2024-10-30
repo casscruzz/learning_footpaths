@@ -4,15 +4,23 @@ body {
   margin: 0 10px 30px 10px; /* top right bottom left */
   padding: 0;
   box-sizing: border-box;
-} /* .header {
-  background-color: #282c34;
-  min-height: 10vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  color: white;
-  font-size: 24px;
-  padding: 0 20px;
-  margin-top: 0 auto;
-} */
+}
+
+.button {
+  background-color: black;
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  padding: 15px 32px; /* Some padding */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Make the container inline-block */
+  font-size: 16px; /* Increase font size */
+  margin: 4px 2px; /* Some margin */
+  cursor: pointer; /* Pointer/hand icon */
+  border-radius: 12px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
