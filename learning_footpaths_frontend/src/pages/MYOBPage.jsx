@@ -1,4 +1,4 @@
-import CustomBadgeIcon from "../components/badgeMaker_page/CustomBadgeIcon";
+import CustomBadgeIcon from "../components/badgemaker_page/CustomBadgeIcon";
 import ExhibitionSelector from "../components/badgemaker_page/ExhibitionSelector";
 import Header from "../components/Header";
 
