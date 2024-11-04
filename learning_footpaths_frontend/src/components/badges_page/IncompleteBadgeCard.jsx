@@ -1,22 +1,16 @@
 import React from "react";
+import styles from "../../css/badges_page/IncompleteBadgeCard.module.css";
 
 export default function IncompleteBadgeCard({ title, points }) {
   const totalPoints = 100;
   const pointsLeft = totalPoints - points;
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "16px",
-        textAlign: "center",
-        width: "200px",
-      }}
-    >
-      <div style={{ fontSize: "48px" }}>🏅</div>
+    <div className={styles.card}>
+      <div className={styles.icon}>🏅</div>
       <h2>{title}</h2>
       <div style={{ margin: "16px 0" }}>
+        {/* This part is the progress bar, I'm not sure yet how to move this to the css module */}
         <div
           style={{
             height: "10px",

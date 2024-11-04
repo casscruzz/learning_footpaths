@@ -1,0 +1,16 @@
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  width: 200px;
+}
+.icon {
+  font-size: 48px;
+}
+.progress_bar {
+  height: 100%;
+  width: 100%; /* Replace with a static value or use inline styles in HTML/JSX */
+  background-color: #76c7c0;
+  border-radius: 5px;
+}

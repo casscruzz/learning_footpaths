@@ -7,6 +7,7 @@ import ExhibitPageComponent from "./pages/ExhibitionPageComponent";
 import LoginPageComponent from "./pages/LoginPageComponent";
 import RegistrationComponent from "./pages/RegistrationComponent";
 import BadgesDisplayPage from "./pages/BadgesDisplayPage";
+import MYOBPage from "./pages/MYOBPage";
 function App() {
   const [array, setArray] = useState([]);
 
@@ -42,6 +43,12 @@ function App() {
             <Route path="/exhibitions" element={<ExhibitPageComponent />} />
             <Route path="/" element={<LandingPageComponent />} />
             <Route path="/badges" element={<BadgesDisplayPage />} />
+            <Route path="/badgemaker" element={<MYOBPage />} />
+            <Route path="/account" element={<div>Account Page</div>} />
+            <Route
+              path="/accountsettings"
+              element={<div>Account Settings Page</div>}
+            />
           </Routes>
         </BrowserRouter>
       </div>
