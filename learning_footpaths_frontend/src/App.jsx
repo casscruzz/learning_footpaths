@@ -9,10 +9,8 @@ import RegistrationComponent from "./pages/RegistrationComponent";
 import BadgesDisplayPage from "./pages/BadgesDisplayPage";
 import MYOBPage from "./pages/MYOBPage";
 import AccountPage from "./pages/AccountPage";
-// import Home from "./Home"; // delete later
-// import NotFound from "./NotFound"; // delete later
-// import LoginPage from "./LoginPageSample"; // delete later
-// import Register from "./RegisterPageSample"; // delete later
+import NotFoundPage from "./pages/404";
+
 function App() {
   const [array, setArray] = useState([]);
 
@@ -29,17 +27,6 @@ function App() {
 
   return (
     <div>
-      {/* Testing Out the API Call from Flask */}
-      {/* <div>
-        <h1>Testing out the API Call from Flask</h1>
-        <p>
-          {array.map((user, index) => {
-            return <span key={index}>{user}</span>;
-          })}
-        </p>
-      </div> */}
-
-      {/* Testing out the Browser Router */}
       <div>
         <BrowserRouter>
           <Routes>
@@ -54,19 +41,10 @@ function App() {
               path="/accountsettings"
               element={<div>Account Settings Page</div>}
             />
-            {/* JUST TO FOLLOW THROUGH WITH THE TUTORIAL */}
-            {/* <Route path="/" element={<Home />} />
-            <Route exact component={NotFound} />
-            <Route path="/loginsample" exact component={LoginPage} />
-            <Route path="/registersample" exact component={Register} /> */}
+            <Route path="/notfound" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
       </div>
-      {/* <Header />
-      <LandingPageComponent />
-      <ExhibitPageComponent />
-      <LoginPageComponent />
-      <RegistrationComponent /> */}
     </div>
   );
 }

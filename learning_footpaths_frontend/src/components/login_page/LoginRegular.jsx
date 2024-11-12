@@ -9,6 +9,7 @@ export default function LoginRegular() {
             id="email"
             name="email"
             placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -18,6 +19,7 @@ export default function LoginRegular() {
             id="password"
             name="password"
             placeholder="password"
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
