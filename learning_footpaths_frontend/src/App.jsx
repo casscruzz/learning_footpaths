@@ -9,6 +9,10 @@ import RegistrationComponent from "./pages/RegistrationComponent";
 import BadgesDisplayPage from "./pages/BadgesDisplayPage";
 import MYOBPage from "./pages/MYOBPage";
 import AccountPage from "./pages/AccountPage";
+// import Home from "./Home"; // delete later
+// import NotFound from "./NotFound"; // delete later
+// import LoginPage from "./LoginPageSample"; // delete later
+// import Register from "./RegisterPageSample"; // delete later
 function App() {
   const [array, setArray] = useState([]);
 
@@ -50,6 +54,11 @@ function App() {
               path="/accountsettings"
               element={<div>Account Settings Page</div>}
             />
+            {/* JUST TO FOLLOW THROUGH WITH THE TUTORIAL */}
+            {/* <Route path="/" element={<Home />} />
+            <Route exact component={NotFound} />
+            <Route path="/loginsample" exact component={LoginPage} />
+            <Route path="/registersample" exact component={Register} /> */}
           </Routes>
         </BrowserRouter>
       </div>
