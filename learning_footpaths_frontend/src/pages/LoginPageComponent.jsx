@@ -5,32 +5,35 @@ import React, { useState } from "react";
 import httpClient from "../httpClient";
 
 export default function LoginPageComponent() {
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const logInUser = async () => {
     console.log(email, password);
 
-    const resp = await httpClient.post("http://localhost:8888/login", {
-      email,
-      password,
-    });
+    let resp;
+    try {
+      resp = await httpClient.post("http://localhost:8888/login", {
+        email,
+        password,
+      });
+    } catch (e) {
+      if (e.response && e.response.status === 401) {
+        alert("Invalid email or password");
+      }
+      return;
+    }
 
-    console.log(resp.data);
+    if (resp.status === 200) {
+      window.location.href = "/";
+    } else if (resp.status === 401) {
+      console.log("Invalid email or password");
+    }
   };
   return (
     <div>
       <Header />
       <h1>Log-in Page</h1>
-      {/* <form>
-        <input
-          type="text"
-          value="email"
-          onChange={(e) => setEmail(e.target.value)}
-          id=""
-        />
-      </form> */}
-
       <LoginAlternative />
       {/* <LoginRegular /> */}
       <div>
@@ -62,7 +65,6 @@ export default function LoginPageComponent() {
           <button
             type="button"
             onClick={(e) => {
-              e.preventDefault();
               logInUser();
             }}
           >
