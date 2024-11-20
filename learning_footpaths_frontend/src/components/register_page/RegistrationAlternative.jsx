@@ -1,7 +1,6 @@
 export default function RegistrationAlternative() {
   return (
     <div>
-      <h1>Registration Alternative</h1>
       <div
         style={{
           display: "flex",

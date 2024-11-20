@@ -1,8 +1,9 @@
 import LoginAlternative from "../components/login_page/LoginAlternative";
-// import LoginRegular from "../components/login_page/LoginRegular";
 import Header from "../components/Header";
 import React, { useState } from "react";
 import httpClient from "../httpClient";
+import "../css/App.css";
+import styles from "../css/login_page/LoginPage.module.css";
 
 export default function LoginPageComponent() {
   const [email, setEmail] = useState("");
@@ -33,47 +34,54 @@ export default function LoginPageComponent() {
   return (
     <div>
       <Header />
-      <h1>Log-in Page</h1>
-      <LoginAlternative />
-      {/* <LoginRegular /> */}
-      <div>
-        <h1>Log-in Regular</h1>
-        <form>
-          <div>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="email"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="password"
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <a href="/forgot-password">Forgot password?</a>
-          </div>
-          <button
-            type="button"
-            onClick={(e) => {
-              logInUser();
-            }}
-          >
-            Login
-          </button>
-        </form>
-        <p>
-          Don't have an account? <a href="/register">Register Now.</a>
-        </p>
+      <div className={styles.loginContainer}>
+        <h1 style={{ textAlign: "center" }}>Log-in</h1>
+        <LoginAlternative />
+
+        <div>
+          <h2 style={{ textAlign: "center" }}>Log-in with email</h2>
+          <form className={styles.loginForm}>
+            <div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="email"
+                onChange={(e) => setEmail(e.target.value)}
+                className={styles.loginInput}
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="password"
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.loginInput}
+                required
+              />
+            </div>
+            <div
+              style={{ textAlign: "center", fontSize: "12px", color: "grey" }}
+            >
+              <a href="/forgot-password">Forgot password?</a>
+            </div>
+            <button
+              className="button"
+              type="button"
+              onClick={(e) => {
+                logInUser();
+              }}
+            >
+              Login
+            </button>
+          </form>
+          <p style={{ textAlign: "center", fontSize: "12px", color: "grey" }}>
+            Don't have an account? <a href="/register">Register Now.</a>
+          </p>
+        </div>
       </div>
     </div>
   );

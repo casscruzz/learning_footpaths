@@ -1,20 +1,47 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-  margin: 0 10px 30px 10px; /* top right bottom left */
-  padding: 0;
-  box-sizing: border-box;
+/* defining color variables */
+:root {
+  --white: #ffffff;
+  --light-gray: #eeeeee;
+  --green: #8dc549;
+  --blue: #049ed9;
+  --dark-gray: #4d4d4d;
+  --light-blue: #e8f7fc;
+  --yellow: #ffdc2d;
+  --cyan: #1caede;
+  --brown: #886536;
+  --black: #333333;
+  --very-light-gray: #f1f1f1;
+  --medium-gray: #cccccc;
+  --gray: #777777;
+  --red: #e3202b;
 }
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, sans-serif;
+  background-color: var(--white);
+  height: 100%;
+  overflow-y: auto; /* Ensure the body is scrollable */
+}
+
+.page-container {
+  padding: 0 20px;
+  margin: 0;
+  min-height: 100vh; /* Ensure the container takes at least the full viewport height */
+}
+
+/* design for all the buttons */
 .button {
   background-color: black;
   border: none; /* Remove borders */
-  color: white; /* White text */
-  padding: 15px 32px; /* Some padding */
+  color: var(--white); /* White text */
+  padding: 10px 20px; /* Adjusted padding for mobile */
   text-align: center; /* Centered text */
   text-decoration: none; /* Remove underline */
   display: inline-block; /* Make the container inline-block */
-  font-size: 16px; /* Increase font size */
+  font-size: 14px; /* Adjusted font size for mobile */
   margin: 4px 2px; /* Some margin */
   cursor: pointer; /* Pointer/hand icon */
   border-radius: 12px; /* Rounded corners */
@@ -22,5 +49,22 @@ body {
 }
 
 .button:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: var(--dark-gray); /* Darker green on hover */
+}
+
+/* grade level selector font size */
+.grade-level-select {
+  font-size: 18px; /* Increase the font size */
+  padding: 10px; /* Add padding for better touch targets */
+  width: 100%; /* Make the select element full width */
+  border-radius: 5px; /* Add border radius for better aesthetics */
+  border: 1px solid var(--medium-gray); /* Add border */
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .button {
+    padding: 15px 32px; /* Increased padding for larger screens */
+    font-size: 16px; /* Increased font size for larger screens */
+  }
 }

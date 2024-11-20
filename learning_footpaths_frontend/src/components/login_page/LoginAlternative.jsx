@@ -2,7 +2,7 @@ import "../../css/App.css";
 export default function LoginAlternative() {
   return (
     <div>
-      <h1>Log-in Alternative</h1>
+      {/* <h1>Log-in Alternative</h1> */}
       <div
         style={{
           display: "flex",

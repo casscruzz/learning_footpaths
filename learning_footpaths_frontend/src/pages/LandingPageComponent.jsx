@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import httpClient from "../httpClient"; // Import your custom axios instance
-
+import "../css/App.css";
 // Configure axios to send cookies with requests
 axios.defaults.withCredentials = true;
 
@@ -28,20 +28,32 @@ export default function LandingPageComponent() {
   return (
     <div>
       <Header />
-      <div>
-        {user ? <p>Logged in</p> : <p>Not logged in</p>}
-        {user && (
-          <>
-            <h3>ID:{user.id}</h3>
-            <h3>Email:{user.email}</h3>
-          </>
-        )}
-      </div>
-      <div>
-        <button onClick={logoutUser}>Logout</button>
-      </div>
       <LandingPageText />
       <FootpathCards />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div>
+          <h3> Status Check (for Development)</h3>
+          {user ? <p>Logged in</p> : <p>Not logged in</p>}
+          {user && (
+            <>
+              <h3>ID:{user.id}</h3>
+              <h3>Email:{user.email}</h3>
+            </>
+          )}
+        </div>
+        <div>
+          <button className="button" onClick={logoutUser}>
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

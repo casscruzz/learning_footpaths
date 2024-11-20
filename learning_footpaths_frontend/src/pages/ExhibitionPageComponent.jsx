@@ -3,15 +3,18 @@ import ExhibitionPageText from "../components/exhibitions_page/ExhibitionPageTex
 import GradeLevelToggle from "../components/exhibitions_page/GradeLevelToggle";
 import ProgressBarSection from "../components/exhibitions_page/ProgressBarSection";
 import Header from "../components/Header";
+import "../css/App.css";
 
 export default function ExhibitionPageComponent() {
   return (
     <div>
       <Header />
-      <ExhibitionPageText />
-      <ProgressBarSection />
-      <GradeLevelToggle />
-      <ExhibitionCards />
+      <div className="page-container">
+        <ExhibitionPageText />
+        <ProgressBarSection />
+        <GradeLevelToggle />
+        <ExhibitionCards />
+      </div>
     </div>
   );
 }

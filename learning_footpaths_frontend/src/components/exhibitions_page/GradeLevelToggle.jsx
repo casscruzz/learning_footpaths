@@ -1,3 +1,4 @@
+import "../../css/App.css";
 export default function GradeLevelToggle({ gradeLevels }) {
   const gradeLevelsList = [
     "Kindergarten",
@@ -19,7 +20,7 @@ export default function GradeLevelToggle({ gradeLevels }) {
     <div>
       <h3>Grade Levels</h3>
       <div>
-        <select defaultValue="">
+        <select className="grade-level-select" defaultValue="">
           <option value="" disabled>
             Select grade level
           </option>
