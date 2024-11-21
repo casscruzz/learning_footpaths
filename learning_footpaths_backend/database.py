@@ -12,13 +12,13 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Create the SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
-
-# Create a session maker
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(DATABASE_URL, echo=True)
 
 # Base class for SQLAlchemy models
 Base = declarative_base()
 
-# Initialize SQLAlchemy
-db = SQLAlchemy()
+# Create a session maker
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# # Initialize SQLAlchemy
+# db = SQLAlchemy()

@@ -14,16 +14,16 @@ import NotFoundPage from "./pages/404";
 function App() {
   const [array, setArray] = useState([]);
 
-  const fetchAPI = async () => {
-    const response = await axios.get("http://localhost:8888/api/users");
-    console.log([response.data.users]);
-    setArray([response.data.users]);
-    // console.log(array);
-  };
+  // const fetchAPI = async () => {
+  //   const response = await axios.get("http://localhost:8888/api/users");
+  //   console.log([response.data.users]);
+  //   setArray([response.data.users]);
+  //   // console.log(array);
+  // };
 
-  useEffect(() => {
-    fetchAPI();
-  }, []);
+  // useEffect(() => {
+  //   fetchAPI();
+  // }, []);
 
   return (
     <div>

@@ -10,7 +10,7 @@ class ApplicationConfig:
     SECRET_KEY = os.environ["SECRET_KEY"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = r"sqlite:///./db.sqlite"
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")  # r"sqlite:///./db.sqlite"
     # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://username:password@localhost/dbname'
     # SESSION_TYPE = 'filesystem'
 
