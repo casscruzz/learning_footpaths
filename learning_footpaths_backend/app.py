@@ -59,12 +59,34 @@ def register_user():
     return jsonify({"id": new_user.id, "email": new_user.email})
 
 
+# @app.route("/login", methods=["POST"])
+# def login_user():
+#     email = request.json["email"]
+#     password = request.json["password"]
+
+#     user = User.query.filter_by(email=email).first()
+
+#     # if user does not exist
+#     if user is None:
+#         return jsonify({"error": "Unauthorized"}), 401
+
+#     # if password is incorrect
+#     if not bcrypt.check_password_hash(user.password, password):
+#         return jsonify({"error": "Unauthorized"}), 401
+
+#     session["user_id"] = user.id
+
+
+#     return jsonify({"id": user.id, "email": user.email})
 @app.route("/login", methods=["POST"])
 def login_user():
+    print("login app.py")
     email = request.json["email"]
     password = request.json["password"]
+    print(email, password)
 
     user = User.query.filter_by(email=email).first()
+    print("user?", user)
 
     # if user does not exist
     if user is None:
