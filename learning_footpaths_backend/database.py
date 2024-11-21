@@ -20,5 +20,5 @@ Base = declarative_base()
 # Create a session maker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# # Initialize SQLAlchemy
-# db = SQLAlchemy()
+# Initialize SQLAlchemy
+db = SQLAlchemy()

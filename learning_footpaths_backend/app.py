@@ -10,19 +10,20 @@
 # from redis import Redis
 from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_session import Session as FlaskSession
 from config import ApplicationConfig
-from database import Base, engine, SessionLocal
+from database import db, SessionLocal  # Base, engine, ,
 from models import User
 from redis import Redis
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 
-# db.init_app(app)
-# migrate = Migrate(app, db)
+db.init_app(app)
+migrate = Migrate(app, db)
 
 
 cors = CORS(
@@ -128,7 +129,7 @@ def logout_user():
 
 
 # Create all tables in the database
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
 
