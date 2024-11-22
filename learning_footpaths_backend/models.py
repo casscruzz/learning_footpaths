@@ -7,8 +7,8 @@ from database import Base, engine
 
 db = SQLAlchemy()
 
-# create a session factory
-Session = sessionmaker(bind=engine)
+# # create a session factory
+# Session = sessionmaker(bind=engine)
 
 
 def get_uuid():

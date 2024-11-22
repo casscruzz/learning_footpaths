@@ -25,7 +25,6 @@ app.config.from_object(ApplicationConfig)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-
 cors = CORS(
     app,
     resources={r"/*": {"origins": "http://localhost:5173"}},
