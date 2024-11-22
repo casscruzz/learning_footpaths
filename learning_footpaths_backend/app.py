@@ -16,7 +16,7 @@ from flask_bcrypt import Bcrypt
 from flask_session import Session as FlaskSession
 from config import ApplicationConfig
 from database import db, SessionLocal  # Base, engine, ,
-from models import User
+from models import User, LearningFootpath, Exhibition
 from redis import Redis
 
 app = Flask(__name__)
@@ -77,29 +77,6 @@ def register_user():
         db_session.close()
 
 
-# @app.route("/login", methods=["POST"])
-# def login_user():
-#     print("login app.py")
-#     email = request.json["email"]
-#     password = request.json["password"]
-#     print(email, password)
-
-#     user = User.query.filter_by(email=email).first()
-#     print("user?", user)
-
-#     # if user does not exist
-#     if user is None:
-#         return jsonify({"error": "Unauthorized"}), 401
-
-#     # if password is incorrect
-#     if not bcrypt.check_password_hash(user.password, password):
-#         return jsonify({"error": "Unauthorized"}), 401
-
-#     session["user_id"] = user.id
-
-#     return jsonify({"id": user.id, "email": user.email})
-
-
 @app.route("/login", methods=["POST"])
 def login_user():
     email = request.json["email"]
@@ -127,8 +104,40 @@ def logout_user():
     return "200"
 
 
-# Create all tables in the database
-# Base.metadata.create_all(bind=engine)
+# route for rendering footpath questions on landing page
+@app.route("/api/big-questions", methods=["GET"])
+def get_big_questions():
+    db_session = SessionLocal()
+    try:
+        footpaths = db_session.query(
+            LearningFootpath.name, LearningFootpath.big_question
+        ).all()
+        return jsonify({footpath.name: footpath.big_question for footpath in footpaths})
+    finally:
+        db_session.close()
+
+
+# route for rendering exhibitions after selecting footpath
+@app.route("/api/exhibitions/<footpath_name>", methods=["GET"])
+def get_exhibitions(footpath_name):
+    db_session = SessionLocal()
+    try:
+        exhibitions = (
+            db_session.query(Exhibition)
+            .join(LearningFootpath)
+            .filter(LearningFootpath.name == footpath_name)
+            .all()
+        )
+
+        return jsonify(
+            [
+                {"title": exhibition.title, "description": exhibition.description}
+                for exhibition in exhibitions
+            ]
+        )
+    finally:
+        db_session.close()
+
 
 if __name__ == "__main__":
 

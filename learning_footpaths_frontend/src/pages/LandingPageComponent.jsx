@@ -1,14 +1,16 @@
 import FootpathCards from "../components/landing_page/FootpathCards";
+import FootpathCard from "../components/landing_page/FootpathCard";
 import LandingPageText from "../components/landing_page/LandingPageText";
 import Header from "../components/Header";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import httpClient from "../httpClient"; // Import your custom axios instance
 import "../css/App.css";
+import styles from "../css/landing_page/FootpathCards.module.css";
 // Configure axios to send cookies with requests
 axios.defaults.withCredentials = true;
 
-export default function LandingPageComponent() {
+const LandingPageComponent = () => {
   const [user, setUser] = useState(null);
   useEffect(() => {
     (async () => {
@@ -25,11 +27,46 @@ export default function LandingPageComponent() {
     await httpClient.post("http://localhost:8888/logout");
     window.location.href = "/";
   };
+
+  // rendering with big questions from database
+  const [bigQuestions, setBigQuestions] = useState([]);
+
+  useEffect(() => {
+    const fetchBigQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:8888/api/big-questions");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setBigQuestions(data);
+      } catch (error) {
+        console.error("Error fetching big questions:", error);
+      }
+    };
+
+    fetchBigQuestions();
+    // console.log("Fetched big questions:", bigQuestions);
+  }, []);
+
   return (
     <div>
       <Header />
       <LandingPageText />
-      <FootpathCards />
+      <div>
+        {/* <div className={styles.cardHolder}>
+          {bigQuestions.map((question, index) => (
+            <FootpathCard key={index} title={question} />
+          ))}
+        </div> */}
+        <div className={styles.cardHolder}>
+          {Object.entries(bigQuestions).map(([title, question], index) => (
+            <FootpathCard key={index} title={title} question={question} />
+          ))}
+        </div>
+      </div>
+      {/* <FootpathCards /> */}
+      {console.log("Fetched big questions:", bigQuestions)}
       <div
         style={{
           display: "flex",
@@ -56,4 +93,6 @@ export default function LandingPageComponent() {
       </div>
     </div>
   );
-}
+};
+
+export default LandingPageComponent;
