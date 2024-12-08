@@ -1,12 +1,16 @@
 import styles from "../../css/landing_page/FootpathCard.module.css";
 import { useNavigate } from "react-router-dom";
 
-const FootpathCard = ({ key, title, question }) => {
+const FootpathCard = ({ id, title, question }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/exhibitions", {
-      state: { footpathName: title, bigQuestion: question },
+    navigate(`/exhibitions`, {
+      state: {
+        footpathId: id,
+        footpathName: title,
+        bigQuestion: question,
+      },
     });
   };
   return (

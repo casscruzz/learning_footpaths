@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import ExhibitionCards from "../components/exhibitions_page/ExhibitionCards";
 import ExhibitionPageText from "../components/exhibitions_page/ExhibitionPageText";
 import GradeLevelToggle from "../components/exhibitions_page/GradeLevelToggle";
@@ -8,14 +10,14 @@ import "../css/App.css";
 export default function ExhibitionPageComponent() {
   // fetch exhibitions from database
   const location = useLocation();
-  const { footpathName, bigQuestion } = location.state || {};
+  const { footpathId, footpathName, bigQuestion } = location.state || {};
   const [exhibitions, setExhibitions] = useState([]);
 
   useEffect(() => {
     const fetchExhibitions = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8888/api/exhibitions/${footpathName}`
+          `http://localhost:8888/api/exhibitions/${footpathId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -27,10 +29,10 @@ export default function ExhibitionPageComponent() {
       }
     };
 
-    if (footpathName) {
+    if (footpathId) {
       fetchExhibitions();
     }
-  }, [footpathName]);
+  }, [footpathId]);
   return (
     <div>
       <Header />

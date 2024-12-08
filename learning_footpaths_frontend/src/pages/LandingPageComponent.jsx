@@ -29,7 +29,7 @@ const LandingPageComponent = () => {
   };
 
   // rendering with big questions from database
-  const [bigQuestions, setBigQuestions] = useState([]);
+  const [bigQuestions, setBigQuestions] = useState([]); // previously {}
 
   useEffect(() => {
     const fetchBigQuestions = async () => {
@@ -46,7 +46,8 @@ const LandingPageComponent = () => {
     };
 
     fetchBigQuestions();
-    // console.log("Fetched big questions:", bigQuestions);
+    // console.log("Questions have been fetched");
+    console.log("Fetched big questions:", bigQuestions);
   }, []);
 
   return (
@@ -60,8 +61,13 @@ const LandingPageComponent = () => {
           ))}
         </div> */}
         <div className={styles.cardHolder}>
-          {Object.entries(bigQuestions).map(([title, question], index) => (
-            <FootpathCard key={index} title={title} question={question} />
+          {bigQuestions.map((footpath) => (
+            <FootpathCard
+              key={footpath.id}
+              id={footpath.id}
+              title={footpath.name}
+              question={footpath.big_question}
+            />
           ))}
         </div>
       </div>

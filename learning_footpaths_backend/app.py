@@ -104,34 +104,44 @@ def logout_user():
     return "200"
 
 
-# route for rendering footpath questions on landing page
+# route for rendering footpath questions on landing page + rendering the right exhibitions
 @app.route("/api/big-questions", methods=["GET"])
 def get_big_questions():
     db_session = SessionLocal()
     try:
-        footpaths = db_session.query(
-            LearningFootpath.name, LearningFootpath.big_question
-        ).all()
-        return jsonify({footpath.name: footpath.big_question for footpath in footpaths})
+        footpaths = db_session.query(LearningFootpath).all()
+        return jsonify(
+            [
+                {
+                    "id": footpath.id,
+                    "name": footpath.name,
+                    "big_question": footpath.big_question,
+                }
+                for footpath in footpaths
+            ]
+        )
     finally:
         db_session.close()
 
 
 # route for rendering exhibitions after selecting footpath
-@app.route("/api/exhibitions/<footpath_name>", methods=["GET"])
-def get_exhibitions(footpath_name):
+@app.route("/api/exhibitions/<int:footpath_id>", methods=["GET"])
+def get_exhibitions_by_footpath(footpath_id):
     db_session = SessionLocal()
     try:
-        exhibitions = (
-            db_session.query(Exhibition)
-            .join(LearningFootpath)
-            .filter(LearningFootpath.name == footpath_name)
-            .all()
-        )
+        # Get the footpath and its associated exhibitions
+        footpath = db_session.query(LearningFootpath).get(footpath_id)
+        if not footpath:
+            return jsonify({"error": "Footpath not found"}), 404
 
+        exhibitions = footpath.exhibitions
         return jsonify(
             [
-                {"title": exhibition.title, "description": exhibition.description}
+                {
+                    "id": exhibition.id,
+                    "title": exhibition.title,
+                    "big_question": exhibition.big_question,
+                }
                 for exhibition in exhibitions
             ]
         )
