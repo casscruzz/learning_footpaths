@@ -10,6 +10,7 @@ import BadgesDisplayPage from "./pages/BadgesDisplayPage";
 import MYOBPage from "./pages/MYOBPage";
 import AccountPage from "./pages/AccountPage";
 import NotFoundPage from "./pages/404";
+import ExhibitionQuizPage from "./pages/ExhibitionQuizPage";
 
 function App() {
   const [array, setArray] = useState([]);
@@ -42,6 +43,7 @@ function App() {
               element={<div>Account Settings Page</div>}
             />
             <Route path="/notfound" element={<NotFoundPage />} />
+            <Route path="/exhibition-quiz" element={<ExhibitionQuizPage />} />
           </Routes>
         </BrowserRouter>
       </div>

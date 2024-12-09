@@ -12,42 +12,39 @@ axios.defaults.withCredentials = true;
 
 const LandingPageComponent = () => {
   const [user, setUser] = useState(null);
+  const [bigQuestions, setBigQuestions] = useState([]);
+
   useEffect(() => {
-    (async () => {
+    const fetchUserAndQuestions = async () => {
       try {
-        const resp = await axios.get("http://localhost:8888/@me");
-        setUser(resp.data);
+        // Separate the API calls
+        const questionsResp = await fetch(
+          "http://localhost:8888/api/big-questions"
+        );
+        const questionsData = await questionsResp.json();
+        setBigQuestions(questionsData);
+
+        // Try to get user info, but don't block on failure
+        try {
+          const userResp = await axios.get("http://localhost:8888/@me", {
+            withCredentials: true,
+          });
+          setUser(userResp.data);
+        } catch (error) {
+          console.log("User not authenticated");
+        }
       } catch (error) {
-        console.log("Not Authenticated");
+        console.error("Error fetching questions:", error);
       }
-    })();
+    };
+
+    fetchUserAndQuestions();
   }, []);
 
   const logoutUser = async () => {
     await httpClient.post("http://localhost:8888/logout");
     window.location.href = "/";
   };
-
-  // rendering with big questions from database
-  const [bigQuestions, setBigQuestions] = useState([]);
-
-  useEffect(() => {
-    const fetchBigQuestions = async () => {
-      try {
-        const response = await fetch("http://localhost:8888/api/big-questions");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setBigQuestions(data);
-      } catch (error) {
-        console.error("Error fetching big questions:", error);
-      }
-    };
-
-    fetchBigQuestions();
-    // console.log("Fetched big questions:", bigQuestions);
-  }, []);
 
   return (
     <div>
@@ -57,6 +54,11 @@ const LandingPageComponent = () => {
         {/* <div className={styles.cardHolder}>
           {bigQuestions.map((question, index) => (
             <FootpathCard key={index} title={question} />
+          ))}
+        </div> */}
+        {/* <div className={styles.cardHolder}>
+          {Object.entries(bigQuestions).map(([title, question], index) => (
+            <FootpathCard key={index} title={title} question={question} />
           ))}
         </div> */}
         <div className={styles.cardHolder}>
