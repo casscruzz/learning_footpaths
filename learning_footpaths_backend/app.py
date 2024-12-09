@@ -1,14 +1,4 @@
-# from flask import Flask, jsonify, request, session
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_migrate import Migrate
-# from flask_cors import CORS
-# from flask_bcrypt import Bcrypt
-# from flask_session import Session
-# from config import ApplicationConfig
-# from database import Base, engine, db  # Import the db instance from database.py
-# from models import Session, User  # Import your models here
-# from redis import Redis
-from flask import Flask, jsonify, request, session
+from flask import Blueprint, Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -28,6 +18,11 @@ from redis import Redis
 from datetime import datetime, timedelta
 from models import TempQuizResult
 import os
+from scoring_utils import get_all_user_footpath_scores
+
+
+from routes.scoring import scoring_bp
+
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -42,6 +37,17 @@ cors = CORS(
     resources={r"/*": {"origins": "http://localhost:5173"}},
     supports_credentials=True,
 )
+# cors = CORS(
+#     app,
+#     resources={
+#         r"/*": {
+#             "origins": ["http://localhost:5173"],  # Your React app's URL
+#             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+#             "allow_headers": ["Content-Type"],
+#             "supports_credentials": True,
+#         }
+#     },
+# )
 
 bcrypt = Bcrypt(app)
 server_session = FlaskSession(app)
@@ -63,63 +69,6 @@ def get_current_user():
     finally:
         db_session.close()
     return jsonify({"id": user.id, "email": user.email})
-
-
-# @app.route("/register", methods=["POST"])
-# def register_user():
-#     email = request.json["email"]
-#     password = request.json["password"]
-#     session_id = request.json.get("quiz_session_id")
-
-#     if not email or not password:
-#         return jsonify({"error": "Email and password are required."}), 400
-
-#     temp_result = None
-
-#     db_session = SessionLocal()
-#     try:
-#         user_exists = db_session.query(User).filter_by(email=email).first() is not None
-
-#         if user_exists:
-#             return jsonify({"error": "User already exists"}), 409
-
-#         # Create new user
-#         hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-#         new_user = User(email=email, password=hashed_password)
-#         db_session.add(new_user)
-#         db_session.commit()
-
-#         # If there's a temporary quiz result, save it
-#         if session_id:
-#             temp_result = (
-#                 db_session.query(TempQuizResult)
-#                 .filter_by(session_id=session_id)
-#                 .first()
-#             )
-#             if temp_result:
-#                 new_progress = UserExhibitionProgress(
-#                     user_id=new_user.id,
-#                     exhibition_id=temp_result.exhibition_id,
-#                     score=temp_result.score,
-#                     completed=True,
-#                 )
-#                 db_session.add(new_progress)
-#                 db_session.commit()
-
-#                 # Clean up temporary result
-#                 db_session.delete(temp_result)
-#                 db_session.commit()
-
-#         session["user_id"] = new_user.id
-#         return jsonify(
-#             {
-#                 "id": new_user.id,
-#                 "email": email,
-#                 "footpath_name": temp_result.footpath_name if temp_result else None,
-#             }
-#         )
-#     finally:
-#         db_session.close()
 
 
 # Modified register route
@@ -191,28 +140,29 @@ def register_user():
         db_session.close()
 
 
-# Modified login route
+# route for logging in
 # @app.route("/login", methods=["POST"])
 # def login_user():
 #     email = request.json["email"]
 #     password = request.json["password"]
-#     session_id = request.json.get("quiz_session_id")
+#     session_id = request.json.get("quiz_session_id")  # This might be None
+#     temp_result = None  # Initialize temp_result
 
 #     db_session = SessionLocal()
-#     temp_result = None
 #     try:
 #         user = db_session.query(User).filter_by(email=email).first()
 
 #         if user is None or not bcrypt.check_password_hash(user.password, password):
 #             return jsonify({"error": "Unauthorized"}), 401
 
-#         # If there's a temporary quiz result, save it
+#         # Only process temp_result if session_id exists
 #         if session_id:
 #             temp_result = (
 #                 db_session.query(TempQuizResult)
 #                 .filter_by(session_id=session_id)
 #                 .first()
 #             )
+
 #             if temp_result:
 #                 existing_progress = (
 #                     db_session.query(UserExhibitionProgress)
@@ -221,37 +171,44 @@ def register_user():
 #                 )
 
 #                 if existing_progress:
-#                     existing_progress.score = max(
-#                         existing_progress.score, temp_result.score
-#                     )
-#                     existing_progress.completed = True
+#                     if temp_result.score > existing_progress.score:
+#                         existing_progress.score = temp_result.score
+#                         existing_progress.completed = True
+#                         existing_progress.footpath_id = temp_result.footpath_id
 #                 else:
 #                     new_progress = UserExhibitionProgress(
 #                         user_id=user.id,
 #                         exhibition_id=temp_result.exhibition_id,
 #                         score=temp_result.score,
 #                         completed=True,
+#                         footpath_id=temp_result.footpath_id,
 #                     )
 #                     db_session.add(new_progress)
 
 #                 db_session.commit()
-
-#                 # Clean up temporary result
 #                 db_session.delete(temp_result)
 #                 db_session.commit()
 
+#         # Set the session regardless of temp_result
 #         session["user_id"] = user.id
+
+#         # Return response with optional footpath data
 #         return jsonify(
 #             {
 #                 "id": user.id,
 #                 "email": user.email,
 #                 "footpath_name": temp_result.footpath_name if temp_result else None,
+#                 "footpath_id": temp_result.footpath_id if temp_result else None,
 #             }
 #         )
+
+
+#     except Exception as e:
+#         db_session.rollback()
+#         print(f"Login error: {str(e)}")  # For debugging
+#         return jsonify({"error": "Internal server error"}), 500
 #     finally:
 #         db_session.close()
-
-
 @app.route("/login", methods=["POST"])
 def login_user():
     email = request.json["email"]
@@ -260,19 +217,31 @@ def login_user():
 
     db_session = SessionLocal()
     try:
+        # First verify user credentials
         user = db_session.query(User).filter_by(email=email).first()
 
         if user is None or not bcrypt.check_password_hash(user.password, password):
             return jsonify({"error": "Unauthorized"}), 401
 
-        # If there's a temporary quiz result, save it
+        # Set session regardless of quiz completion
+        session["user_id"] = user.id
+        response_data = {
+            "id": user.id,
+            "email": user.email,
+            "footpath_name": None,
+            "footpath_id": None,
+        }
+
+        # Handle quiz results if they exist
         if session_id:
             temp_result = (
                 db_session.query(TempQuizResult)
                 .filter_by(session_id=session_id)
                 .first()
             )
+
             if temp_result:
+                # Check for existing progress
                 existing_progress = (
                     db_session.query(UserExhibitionProgress)
                     .filter_by(user_id=user.id, exhibition_id=temp_result.exhibition_id)
@@ -280,32 +249,43 @@ def login_user():
                 )
 
                 if existing_progress:
+                    # Update only if new score is higher
                     if temp_result.score > existing_progress.score:
                         existing_progress.score = temp_result.score
                         existing_progress.completed = True
                         existing_progress.footpath_id = temp_result.footpath_id
                 else:
+                    # Create new progress entry
                     new_progress = UserExhibitionProgress(
                         user_id=user.id,
                         exhibition_id=temp_result.exhibition_id,
                         score=temp_result.score,
                         completed=True,
                         footpath_id=temp_result.footpath_id,
+                        timestamp=datetime.utcnow(),
                     )
                     db_session.add(new_progress)
 
                 db_session.commit()
+
+                # Update response data with footpath info
+                response_data.update(
+                    {
+                        "footpath_name": temp_result.footpath_name,
+                        "footpath_id": temp_result.footpath_id,
+                    }
+                )
+
+                # Clean up temp result
                 db_session.delete(temp_result)
                 db_session.commit()
 
-        session["user_id"] = user.id
-        return jsonify(
-            {
-                "id": user.id,
-                "email": user.email,
-                "footpath_name": temp_result.footpath_name if temp_result else None,
-            }
-        )
+        return jsonify(response_data)
+
+    except Exception as e:
+        db_session.rollback()
+        print(f"Login error: {str(e)}")  # For debugging
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         db_session.close()
 
@@ -438,36 +418,6 @@ def save_exhibition_progress():
         db_session.close()
 
 
-# Route to save temporary quiz result
-# @app.route("/save_temp_quiz", methods=["POST"])
-# def save_temp_quiz():
-#     data = request.get_json()
-#     session_id = data.get("session_id")
-#     exhibition_id = data.get("exhibition_id")
-#     score = data.get("score")
-#     footpath_name = data.get("footpath_name")
-
-#     if not session_id or not exhibition_id or score is None:
-#         return jsonify({"error": "Invalid data provided"}), 400
-
-
-#     db_session = SessionLocal()
-#     try:
-#         temp_result = TempQuizResult(
-#             session_id=session_id,
-#             exhibition_id=exhibition_id,
-#             score=score,
-#             footpath_name=footpath_name,
-#         )
-#         db_session.add(temp_result)
-#         db_session.commit()
-#         return jsonify({"message": "Temporary quiz result saved successfully"}), 201
-#     except Exception as e:
-#         db_session.rollback()
-#         app.logger.error(f"Error saving temporary quiz result: {e}")
-#         return jsonify({"error": "Failed to save temporary quiz result"}), 500
-#     finally:
-#         db_session.close()
 @app.route("/save_temp_quiz", methods=["POST"])
 def save_temp_quiz():
     data = request.get_json()
@@ -556,6 +506,9 @@ def track_last_footpath():
     finally:
         db_session.close()
 
+
+# register app.py to new blueprint
+app.register_blueprint(scoring_bp)
 
 if __name__ == "__main__":
 
