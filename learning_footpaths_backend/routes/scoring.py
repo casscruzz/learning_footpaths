@@ -173,3 +173,42 @@ def get_footpath_progress(footpath_id):
         return jsonify({"error": str(e)}), 500
     finally:
         db_session.close()
+
+
+# endpoint to count earned badges
+@scoring_bp.route("/api/user/badge-count", methods=["GET"])
+def get_user_badge_count():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"badge_count": 0})
+
+    db_session = SessionLocal()
+    try:
+        # Get all footpaths and sum of scores for each
+        footpath_scores = (
+            db_session.query(
+                footpath_exhibition.c.footpath_id,
+                func.sum(UserExhibitionProgress.score).label("total_score"),
+            )
+            .join(
+                UserExhibitionProgress,
+                UserExhibitionProgress.exhibition_id
+                == footpath_exhibition.c.exhibition_id,
+            )
+            .filter(UserExhibitionProgress.user_id == user_id)
+            .group_by(footpath_exhibition.c.footpath_id)
+            .having(func.sum(UserExhibitionProgress.score) >= POINTS_NEEDED_FOR_BADGE)
+            .all()
+        )
+
+        badge_count = len(footpath_scores)
+
+        return jsonify(
+            {"badge_count": badge_count, "points_needed": POINTS_NEEDED_FOR_BADGE}
+        )
+
+    except Exception as e:
+        print(f"Error getting badge count: {str(e)}")
+        return jsonify({"error": "Failed to fetch badge count"}), 500
+    finally:
+        db_session.close()
