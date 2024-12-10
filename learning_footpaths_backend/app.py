@@ -523,6 +523,40 @@ def get_footpath_id(footpath_name):
         db_session.close()
 
 
+# get list of completed exhibtitions
+@app.route("/api/user/completed-exhibitions", methods=["GET"])
+def get_completed_exhibitions():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify([])
+
+    db_session = SessionLocal()
+    try:
+        completed_exhibitions = (
+            db_session.query(UserExhibitionProgress)
+            .filter(
+                UserExhibitionProgress.user_id == user_id,
+                UserExhibitionProgress.completed == True,
+            )
+            .all()
+        )
+
+        return jsonify(
+            [
+                {
+                    "exhibition_id": progress.exhibition_id,
+                    "score": progress.score,
+                    "timestamp": (
+                        progress.timestamp.isoformat() if progress.timestamp else None
+                    ),
+                }
+                for progress in completed_exhibitions
+            ]
+        )
+    finally:
+        db_session.close()
+
+
 # register app.py to new blueprint
 app.register_blueprint(scoring_bp)
 

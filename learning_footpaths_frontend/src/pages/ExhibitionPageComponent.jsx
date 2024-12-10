@@ -65,6 +65,28 @@ export default function ExhibitionPageComponent() {
   const [footpathId, setFootpathId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // fetching completed exhibitions for the current user
+  const [completedExhibitions, setCompletedExhibitions] = useState([]);
+
+  // fetching completed exhibitions for the current user
+  useEffect(() => {
+    const fetchCompletedExhibitions = async () => {
+      try {
+        const completedResponse = await axios.get(
+          "http://localhost:8888/api/user/completed-exhibitions",
+          { withCredentials: true }
+        );
+        setCompletedExhibitions(
+          completedResponse.data.map((exhibition) => exhibition.exhibition_id)
+        );
+      } catch (error) {
+        console.error("Error fetching completed exhibitions:", error);
+        setCompletedExhibitions([]);
+      }
+    };
+
+    fetchCompletedExhibitions();
+  }, []);
   // Add new useEffect to check authentication status
   useEffect(() => {
     const checkAuth = async () => {
@@ -117,6 +139,7 @@ export default function ExhibitionPageComponent() {
         <ExhibitionCards
           exhibitions={exhibitions}
           footpathName={selectedFootpath}
+          completedExhibitions={completedExhibitions}
         />
       </div>
     </div>
