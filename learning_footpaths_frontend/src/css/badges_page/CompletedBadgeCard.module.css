@@ -1,11 +1,55 @@
 .card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  width: 200px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  border: 2px solid #48bb78;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 .icon {
-  font-size: 48px;
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  text-align: center;
+  animation: bounce 1s infinite;
+}
+
+.badgeInfo {
+  text-align: center;
+}
+
+.congratsText {
+  color: #48bb78;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.dateText {
+  color: #718096;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 16px;
+  }
+
+  .badgeGrid {
+    grid-template-columns: 1fr;
+  }
 }

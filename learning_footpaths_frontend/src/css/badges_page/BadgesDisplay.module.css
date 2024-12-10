@@ -1,0 +1,53 @@
+/* BadgesDisplayPage.module.css */
+.container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.headerSection h1 {
+  font-size: 2.5rem;
+  color: #2d3748;
+  margin: 0;
+}
+
+.badgesSummary {
+  color: #718096;
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
+
+.section {
+  margin-bottom: 48px;
+}
+
+.section h2 {
+  color: #4a5568;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+}
+
+.badgeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.loadingState,
+.errorState,
+.emptyState {
+  text-align: center;
+  padding: 48px;
+  color: #718096;
+  font-size: 1.2rem;
+}

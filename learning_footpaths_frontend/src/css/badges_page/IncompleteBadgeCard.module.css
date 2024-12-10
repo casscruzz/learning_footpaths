@@ -1,16 +1,65 @@
 .card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  width: 200px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
 .icon {
-  font-size: 48px;
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  text-align: center;
 }
-.progress_bar {
+
+.card h2 {
+  margin: 0 0 16px 0;
+  color: #2d3748;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.progressContainer {
+  margin-top: 16px;
+}
+
+.progressBar {
+  height: 8px;
+  background-color: #edf2f7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
   height: 100%;
-  width: 100%; /* Replace with a static value or use inline styles in HTML/JSX */
-  background-color: #76c7c0;
-  border-radius: 5px;
+  background: linear-gradient(90deg, #4299e1, #63b3ed);
+  transition: width 0.3s ease;
+}
+
+.pointsText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.currentPoints {
+  color: #4299e1;
+  font-weight: 600;
+}
+
+.separator {
+  margin: 0 4px;
+}
+
+.pointsLeft {
+  margin-left: 8px;
+  font-size: 0.8rem;
 }
