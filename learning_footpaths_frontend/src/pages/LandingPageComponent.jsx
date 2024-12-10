@@ -101,6 +101,7 @@
 
 // export default LandingPageComponent;
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Add this import
 import FootpathCard from "../components/landing_page/FootpathCard";
 import LandingPageText from "../components/landing_page/LandingPageText";
 import Header from "../components/Header";
@@ -172,14 +173,29 @@ const LandingPageComponent = () => {
         </div>
       </div>
 
-      {/* Only show user info and scores if logged in */}
+      {/* Only show user info and account link if logged in */}
       {user && (
         <div className="flex flex-col items-center mt-4">
-          <div>
+          {/* <div>
             <h3>User Information</h3>
             <p>Email: {user.email}</p>
             <FootpathScores />
-          </div>
+          </div> */}
+          <Link
+            to="/account"
+            style={{
+              display: "inline-block",
+              margin: "20px auto",
+              padding: "10px 20px",
+              backgroundColor: "var(--blue)",
+              color: "white",
+              textDecoration: "none",
+              borderRadius: "6px",
+              transition: "background-color 0.2s",
+            }}
+          >
+            View My Account
+          </Link>
           <button className="button mt-4" onClick={logoutUser}>
             Logout
           </button>
