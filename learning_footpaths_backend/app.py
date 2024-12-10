@@ -32,22 +32,23 @@ app.secret_key = os.getenv("SECRET_KEY")
 db.init_app(app)
 migrate = Migrate(app, db)
 
-cors = CORS(
-    app,
-    resources={r"/*": {"origins": "http://localhost:5173"}},
-    supports_credentials=True,
-)
 # cors = CORS(
 #     app,
-#     resources={
-#         r"/*": {
-#             "origins": ["http://localhost:5173"],  # Your React app's URL
-#             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-#             "allow_headers": ["Content-Type"],
-#             "supports_credentials": True,
-#         }
-#     },
+#     resources={r"/*": {"origins": "http://localhost:5173"}},
+#     supports_credentials=True,
 # )
+cors = CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": "http://localhost:5173",
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type"],
+            "supports_credentials": True,
+        }
+    },
+)
+
 
 bcrypt = Bcrypt(app)
 server_session = FlaskSession(app)
@@ -503,6 +504,21 @@ def track_last_footpath():
     except Exception as e:
         db_session.rollback()
         return jsonify({"error": str(e)}), 500
+    finally:
+        db_session.close()
+
+
+# route to get footpath id
+@app.route("/api/footpath-id/<footpath_name>", methods=["GET"])
+def get_footpath_id(footpath_name):
+    db_session = SessionLocal()
+    try:
+        footpath = (
+            db_session.query(LearningFootpath).filter_by(name=footpath_name).first()
+        )
+        if footpath:
+            return jsonify({"footpath_id": footpath.id})
+        return jsonify({"error": "Footpath not found"}), 404
     finally:
         db_session.close()
 

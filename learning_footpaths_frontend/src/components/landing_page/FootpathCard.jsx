@@ -1,5 +1,6 @@
 import styles from "../../css/landing_page/FootpathCard.module.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // const FootpathCard = ({ key, title, question }) => {
 //   const navigate = useNavigate();
