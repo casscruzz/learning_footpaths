@@ -22,6 +22,7 @@ from scoring_utils import get_all_user_footpath_scores
 
 
 from routes.scoring import scoring_bp
+from routes.account_routes import account_bp
 
 
 app = Flask(__name__)
@@ -559,6 +560,8 @@ def get_completed_exhibitions():
 
 # register app.py to new blueprint
 app.register_blueprint(scoring_bp)
+app.register_blueprint(account_bp)
+
 
 if __name__ == "__main__":
 

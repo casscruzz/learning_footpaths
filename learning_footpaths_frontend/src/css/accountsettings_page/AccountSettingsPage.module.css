@@ -1,0 +1,193 @@
+.settingsContainer {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.contentWrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.form {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.photoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.profilePhoto {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 16px;
+  border: 4px solid var(--blue);
+}
+
+.photoButton {
+  background-color: var(--blue);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.photoButton:hover {
+  background-color: var(--dark-blue);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.saveButton,
+.cancelButton {
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.saveButton {
+  background-color: var(--blue);
+  color: white;
+  border: none;
+}
+
+.saveButton:hover {
+  background-color: var(--dark-blue);
+}
+
+.cancelButton {
+  background-color: #fff;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.cancelButton:hover {
+  background-color: #f5f5f5;
+}
+
+.error {
+  background-color: #fee;
+  color: #c00;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .contentWrapper {
+    padding: 16px;
+  }
+
+  .form {
+    padding: 20px;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .saveButton,
+  .cancelButton {
+    width: 100%;
+  }
+
+  .input,
+  .select {
+    font-size: 14px;
+  }
+}
+
+/* Add loading state styles */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 18px;
+  color: #666;
+}
+
+/* Add disabled state styles */
+.saveButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Add transition effects */
+.form {
+  transition: all 0.3s ease;
+}
+
+.input,
+.select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Add success message styles */
+.successMessage {
+  background-color: #e6ffe6;
+  color: #006600;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Add hover effects for form elements */
+.formGroup:hover label {
+  color: var(--blue);
+}
+
+/* Add focus styles for the entire form group */
+.formGroup:focus-within {
+  transform: translateX(4px);
+  transition: transform 0.2s ease;
+}

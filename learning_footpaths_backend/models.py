@@ -36,12 +36,24 @@ footpath_exhibition = Table(
 )
 
 
+# class User(Base):
+#     __tablename__ = "users"
+#     id = Column(String(32), primary_key=True, unique=True, default=get_uuid)
+#     email = Column(String(345), unique=True, nullable=False)
+#     password = Column(Text, nullable=False)
+#     # adding this relationship for the exhibition progress
+#     exhibition_progress = relationship("UserExhibitionProgress", back_populates="user")
 class User(Base):
     __tablename__ = "users"
     id = Column(String(32), primary_key=True, unique=True, default=get_uuid)
     email = Column(String(345), unique=True, nullable=False)
     password = Column(Text, nullable=False)
-    # adding this relationship for the exhibition progress
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
+    grade_level = Column(String(20), nullable=True)
+    profile_photo = Column(String(255), nullable=True)
+
+    # existing relationship
     exhibition_progress = relationship("UserExhibitionProgress", back_populates="user")
 
 
@@ -83,17 +95,6 @@ class Question(Base):
 
 
 # model for user exhibition progress
-# class UserExhibitionProgress(Base):
-#     __tablename__ = "user_exhibition_progress"
-#     id = Column(Integer, primary_key=True)
-#     user_id = Column(String(32), ForeignKey("users.id"))
-#     exhibition_id = Column(Integer, ForeignKey("exhibitions.id"))
-#     score = Column(Integer, default=0)
-#     completed = Column(Boolean, default=False)
-
-
-#     user = relationship("User", back_populates="exhibition_progress")
-#     exhibition = relationship("Exhibition", back_populates="user_progress")
 class UserExhibitionProgress(Base):
     __tablename__ = "user_exhibition_progress"
     id = Column(Integer, primary_key=True, index=True)
