@@ -35,14 +35,15 @@ footpath_exhibition = Table(
     Column("exhibition_id", Integer, ForeignKey("exhibitions.id"), primary_key=True),
 )
 
+# Association table for exhibitions and grade levels
+exhibition_grade_levels = Table(
+    "exhibition_grade_levels",
+    Base.metadata,
+    Column("exhibition_id", Integer, ForeignKey("exhibitions.id"), primary_key=True),
+    Column("grade_level", String(2), primary_key=True),  # 'K' or '1' through '12'
+)
 
-# class User(Base):
-#     __tablename__ = "users"
-#     id = Column(String(32), primary_key=True, unique=True, default=get_uuid)
-#     email = Column(String(345), unique=True, nullable=False)
-#     password = Column(Text, nullable=False)
-#     # adding this relationship for the exhibition progress
-#     exhibition_progress = relationship("UserExhibitionProgress", back_populates="user")
+
 class User(Base):
     __tablename__ = "users"
     id = Column(String(32), primary_key=True, unique=True, default=get_uuid)
@@ -50,10 +51,8 @@ class User(Base):
     password = Column(Text, nullable=False)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
-    grade_level = Column(String(20), nullable=True)
+    grade_level = Column(String(2), nullable=True)  # 'K' or '1' through '12'
     profile_photo = Column(String(255), nullable=True)
-
-    # existing relationship
     exhibition_progress = relationship("UserExhibitionProgress", back_populates="user")
 
 
@@ -70,28 +69,41 @@ class LearningFootpath(Base):
 class Exhibition(Base):
     __tablename__ = "exhibitions"
     id = Column(Integer, primary_key=True)
-
     title = Column(String)
     big_question = Column(String)
+
+    # Define the relationship with grade levels
+    grade_levels = relationship(
+        "GradeLevel", secondary=exhibition_grade_levels, backref="exhibitions"
+    )
+
     footpaths = relationship(
         "LearningFootpath", secondary=footpath_exhibition, back_populates="exhibitions"
     )
     questions = relationship("Question", back_populates="exhibition")
-    # adding this relationship for the user progress
     user_progress = relationship("UserExhibitionProgress", back_populates="exhibition")
+
+
+class GradeLevel(Base):
+    __tablename__ = "grade_levels"
+    grade = Column(String(2), primary_key=True)  # 'K' or '1' through '12'
+    description = Column(String(50))  # e.g., "Kindergarten" or "Grade 1"
 
 
 class Question(Base):
     __tablename__ = "questions"
     id = Column(Integer, primary_key=True)
     exhibition_id = Column(Integer, ForeignKey("exhibitions.id"))
+    grade_level = Column(String(2), ForeignKey("grade_levels.grade"), nullable=False)
     text = Column(String)
     option_a = Column(String)
     option_b = Column(String)
     option_c = Column(String)
     option_d = Column(String)
     correct_answer = Column(String)
+
     exhibition = relationship("Exhibition", back_populates="questions")
+    grade = relationship("GradeLevel")
 
 
 # model for user exhibition progress
