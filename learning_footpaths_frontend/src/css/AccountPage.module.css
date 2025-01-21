@@ -20,8 +20,13 @@
   gap: 32px;
 }
 
-.photoContainer {
+/* .photoContainer {
   flex-shrink: 0;
+} */
+.photoContainer {
+  position: relative;
+  flex-shrink: 0;
+  text-align: center;
 }
 
 .profilePhoto {
@@ -31,7 +36,24 @@
   object-fit: cover;
   border: 4px solid var(--blue);
 }
+.editButton {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: var(--blue);
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
 
+.editButton:hover {
+  background-color: var(--dark-blue);
+}
+.userInfo {
+  flex-grow: 1;
+}
 .userInfo h2 {
   margin: 0 0 8px 0;
   color: #333;
@@ -41,7 +63,21 @@
   margin: 0;
   color: #666;
 }
-
+.gradeLevel {
+  margin: 0 0 8px 0;
+  color: #666;
+  font-size: 16px;
+}
+.memberSince {
+  margin: 0 0 8px 0;
+  color: #666;
+  font-size: 14px;
+}
+.email {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+}
 .progressSection {
   background: white;
   border-radius: 12px;
@@ -53,7 +89,53 @@
   margin: 0 0 24px 0;
   color: #333;
 }
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.sectionHeader h3 {
+  margin: 0;
+  color: #333;
+}
 
+.footpathProgress {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.progressCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.progressCard h4 {
+  margin: 0 0 12px 0;
+  color: var(--blue);
+}
+
+.scoreInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.viewBadgesLink {
+  color: var(--blue);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.viewBadgesLink:hover {
+  text-decoration: underline;
+}
+.badgeEarned {
+  color: #28a745;
+  font-weight: 600;
+}
 .footpathProgress {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -81,6 +163,58 @@
 .badgeEarned {
   color: #28a745;
   font-weight: 600;
+}
+
+.noProgress {
+  text-align: center;
+  padding: 32px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.exploreLink {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 8px 24px;
+  background-color: var(--blue);
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.exploreLink:hover {
+  background-color: var(--dark-blue);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 18px;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .contentWrapper {
+    padding: 16px;
+  }
+
+  .profileSection {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .userInfo {
+    text-align: center;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
 }
 
 @media (max-width: 600px) {

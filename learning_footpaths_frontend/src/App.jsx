@@ -9,6 +9,7 @@ import RegistrationComponent from "./pages/RegistrationComponent";
 import BadgesDisplayPage from "./pages/BadgesDisplayPage";
 import MYOBPage from "./pages/MYOBPage";
 import AccountPage from "./pages/AccountPage";
+import AccountSettingsPage from "./pages/AccountSettingsPage";
 import NotFoundPage from "./pages/404";
 import ExhibitionQuizPage from "./pages/ExhibitionQuizPage";
 
@@ -38,10 +39,7 @@ function App() {
             <Route path="/badges" element={<BadgesDisplayPage />} />
             <Route path="/badgemaker" element={<MYOBPage />} />
             <Route path="/account" element={<AccountPage />} />
-            <Route
-              path="/accountsettings"
-              element={<div>Account Settings Page</div>}
-            />
+            <Route path="/accountsettings" element={<AccountSettingsPage />} />
             <Route path="/notfound" element={<NotFoundPage />} />
             <Route path="/exhibition-quiz" element={<ExhibitionQuizPage />} />
           </Routes>
