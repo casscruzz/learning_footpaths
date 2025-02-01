@@ -35,12 +35,20 @@ footpath_exhibition = Table(
     Column("exhibition_id", Integer, ForeignKey("exhibitions.id"), primary_key=True),
 )
 
-# Association table for exhibitions and grade levels
+# # Association table for exhibitions and grade levels
+# exhibition_grade_levels = Table(
+#     "exhibition_grade_levels",
+#     Base.metadata,
+#     Column("exhibition_id", Integer, ForeignKey("exhibitions.id"), primary_key=True),
+#     Column("grade_level", String(2), primary_key=True),  # 'K' or '1' through '12'
+# )
 exhibition_grade_levels = Table(
     "exhibition_grade_levels",
     Base.metadata,
     Column("exhibition_id", Integer, ForeignKey("exhibitions.id"), primary_key=True),
-    Column("grade_level", String(2), primary_key=True),  # 'K' or '1' through '12'
+    Column(
+        "grade_level", String(2), ForeignKey("grade_levels.grade"), primary_key=True
+    ),
 )
 
 
@@ -73,8 +81,13 @@ class Exhibition(Base):
     big_question = Column(String)
 
     # Define the relationship with grade levels
+    # grade_levels = relationship(
+    #     "GradeLevel", secondary=exhibition_grade_levels, backref="exhibitions"
+    # )
     grade_levels = relationship(
-        "GradeLevel", secondary=exhibition_grade_levels, backref="exhibitions"
+        "GradeLevel",
+        secondary=exhibition_grade_levels,
+        back_populates="exhibitions",  # Changed from backref to back_populates
     )
 
     footpaths = relationship(
@@ -88,6 +101,11 @@ class GradeLevel(Base):
     __tablename__ = "grade_levels"
     grade = Column(String(2), primary_key=True)  # 'K' or '1' through '12'
     description = Column(String(50))  # e.g., "Kindergarten" or "Grade 1"
+
+    # Add this relationship
+    exhibitions = relationship(
+        "Exhibition", secondary=exhibition_grade_levels, back_populates="grade_levels"
+    )
 
 
 class Question(Base):

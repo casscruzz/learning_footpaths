@@ -7,60 +7,13 @@ import ExhibitionPageText from "../components/exhibitions_page/ExhibitionPageTex
 import ProgressBarSection from "../components/exhibitions_page/ProgressBarSection.jsx";
 import GradeLevelToggle from "../components/exhibitions_page/GradeLevelToggle.jsx";
 import ExhibitionCards from "../components/exhibitions_page/ExhibitionCards.jsx";
-// export default function ExhibitionPageComponent() {
-//   const location = useLocation();
-//   const { selectedFootpath } = location.state || {};
-//   const [exhibitions, setExhibitions] = useState([]);
-//   const [bigQuestion, setBigQuestion] = useState("");
-//   const [footpathId, setFootpathId] = useState(null);
-
-//   useEffect(() => {
-//     const fetchExhibitions = async () => {
-//       if (selectedFootpath) {
-//         try {
-//           const response = await axios.get(
-//             `http://localhost:8888/api/exhibitions/${selectedFootpath}`,
-//             { withCredentials: true }
-//           );
-//           setExhibitions(response.data);
-
-//           // Get footpath ID from first exhibition's footpaths
-//           if (response.data && response.data.length > 0) {
-//             const footpathResponse = await axios.get(
-//               `http://localhost:8888/api/footpath-id/${selectedFootpath}`,
-//               { withCredentials: true }
-//             );
-//             setFootpathId(footpathResponse.data.footpath_id);
-//           }
-//         } catch (error) {
-//           console.error("Error fetching exhibitions:", error);
-//         }
-//       }
-//     };
-
-//     fetchExhibitions();
-//   }, [selectedFootpath]);
-
-//   return (
-//     <div>
-//       <Header />
-//       <div className="page-container">
-//         <ExhibitionPageText bigQuestion={bigQuestion} />
-//         {footpathId && <ProgressBarSection footpathId={footpathId} />}
-//         <GradeLevelToggle />
-//         <ExhibitionCards
-//           exhibitions={exhibitions}
-//           footpathName={selectedFootpath}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
 
 export default function ExhibitionPageComponent() {
   const location = useLocation();
   const { selectedFootpath } = location.state || {};
   const [exhibitions, setExhibitions] = useState([]);
+  const [filteredExhibitions, setFilteredExhibitions] = useState([]);
+  const [selectedGrade, setSelectedGrade] = useState(null);
   const [bigQuestion, setBigQuestion] = useState("");
   const [footpathId, setFootpathId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -127,6 +80,23 @@ export default function ExhibitionPageComponent() {
     fetchExhibitions();
   }, [selectedFootpath]);
 
+  // Add new useEffect for filtering exhibitions
+  useEffect(() => {
+    if (selectedGrade) {
+      setFilteredExhibitions(
+        exhibitions.filter((exhibition) =>
+          exhibition.grade_levels.includes(selectedGrade)
+        )
+      );
+    } else {
+      setFilteredExhibitions(exhibitions);
+    }
+  }, [selectedGrade, exhibitions]);
+
+  const handleGradeChange = (grade) => {
+    setSelectedGrade(grade);
+  };
+
   return (
     <div>
       <Header />
@@ -135,9 +105,12 @@ export default function ExhibitionPageComponent() {
         {isAuthenticated && footpathId && (
           <ProgressBarSection footpathId={footpathId} />
         )}
-        <GradeLevelToggle />
+        <GradeLevelToggle
+          selectedGrade={selectedGrade}
+          onGradeChange={handleGradeChange}
+        />
         <ExhibitionCards
-          exhibitions={exhibitions}
+          exhibitions={filteredExhibitions}
           footpathName={selectedFootpath}
           completedExhibitions={completedExhibitions}
         />

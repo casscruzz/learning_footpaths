@@ -316,7 +316,6 @@ def get_big_questions():
 def get_exhibitions_by_footpath(footpath_name):
     db_session = SessionLocal()
     try:
-        # Get the footpath and its associated exhibitions using explicit joins
         footpath = (
             db_session.query(LearningFootpath)
             .filter(LearningFootpath.name == footpath_name)
@@ -326,7 +325,6 @@ def get_exhibitions_by_footpath(footpath_name):
         if not footpath:
             return jsonify({"error": "Footpath not found"}), 404
 
-        # Get exhibitions through the many-to-many relationship
         exhibitions = (
             db_session.query(Exhibition)
             .join(footpath_exhibition)
@@ -341,6 +339,7 @@ def get_exhibitions_by_footpath(footpath_name):
                     "id": exhibition.id,
                     "title": exhibition.title,
                     "description": exhibition.big_question,
+                    "grade_levels": [grade.grade for grade in exhibition.grade_levels],
                 }
                 for exhibition in exhibitions
             ]
