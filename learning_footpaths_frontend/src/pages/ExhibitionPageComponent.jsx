@@ -109,10 +109,16 @@ export default function ExhibitionPageComponent() {
           selectedGrade={selectedGrade}
           onGradeChange={handleGradeChange}
         />
+        {/* <ExhibitionCards
+          exhibitions={filteredExhibitions}
+          footpathName={selectedFootpath}
+          completedExhibitions={completedExhibitions}
+        /> */}
         <ExhibitionCards
           exhibitions={filteredExhibitions}
           footpathName={selectedFootpath}
           completedExhibitions={completedExhibitions}
+          selectedGrade={selectedGrade} // Add this prop
         />
       </div>
     </div>

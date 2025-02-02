@@ -5,6 +5,7 @@ export default function ExhibitionCards({
   exhibitions,
   footpathName,
   completedExhibitions,
+  selectedGrade,
 }) {
   return (
     <div className={styles.cardHolder}>
@@ -14,9 +15,10 @@ export default function ExhibitionCards({
           id={exhibition.id}
           title={exhibition.title}
           description={exhibition.description}
-          footpathName={footpathName} // Make sure this is passed
+          footpathName={footpathName}
           footpathId={exhibition.footpathId}
           isCompleted={completedExhibitions?.includes(exhibition.id)}
+          selectedGrade={selectedGrade}
         />
       ))}
     </div>

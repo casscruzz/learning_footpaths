@@ -1,3 +1,4 @@
+// ExhibitionCard.jsx
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "../../css/exhibitions_page/ExhibitionCard.module.css";
@@ -6,9 +7,10 @@ const ExhibitionCard = ({
   id,
   title,
   description,
-  footpathName, // Make sure we're passing footpathName
+  footpathName,
   footpathId,
   isCompleted,
+  selectedGrade, // Add this prop
 }) => {
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ const ExhibitionCard = ({
     try {
       await axios.post(
         "http://localhost:8888/api/track-last-footpath",
-        { footpath_name: footpathName }, // Use footpathName here
+        { footpath_name: footpathName },
         { withCredentials: true }
       );
     } catch (error) {
@@ -28,8 +30,9 @@ const ExhibitionCard = ({
         exhibitionId: id,
         exhibitionTitle: title,
         exhibitionDescription: description,
-        footpathName, // Make sure to pass footpathName in navigation
+        footpathName,
         returnPath: "/exhibitions",
+        selectedGrade: selectedGrade || "10", // Add this line
       },
     });
   };

@@ -38,7 +38,7 @@ export default function GradeLevelToggle({ selectedGrade, onGradeChange }) {
     };
 
     fetchUserGradeLevel();
-  }, [onGradeChange]);
+  }, []);
 
   const handleChange = (event) => {
     const value = event.target.value;

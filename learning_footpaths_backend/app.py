@@ -351,11 +351,18 @@ def get_exhibitions_by_footpath(footpath_name):
 # route for collecting questions for each exhibition
 @app.route("/api/exhibition-questions/<int:exhibition_id>", methods=["GET"])
 def get_exhibition_questions(exhibition_id):
+    grade_level = request.args.get(
+        "grade_level", "10"
+    )  # Default to grade 10 if not specified
+
     db_session = SessionLocal()
     try:
         questions = (
-            db_session.query(Question).filter_by(exhibition_id=exhibition_id).all()
+            db_session.query(Question)
+            .filter_by(exhibition_id=exhibition_id, grade_level=grade_level)
+            .all()
         )
+
         return jsonify(
             [
                 {
@@ -366,6 +373,7 @@ def get_exhibition_questions(exhibition_id):
                     "option_c": q.option_c,
                     "option_d": q.option_d,
                     "correct_answer": q.correct_answer,
+                    "grade_level": q.grade_level,
                 }
                 for q in questions
             ]
