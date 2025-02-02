@@ -557,6 +557,21 @@ def get_completed_exhibitions():
         db_session.close()
 
 
+# route for getting grade level
+@app.route("/api/user/grade-level", methods=["GET"])
+def get_user_grade_level():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"grade_level": None}), 200
+
+    db_session = SessionLocal()
+    try:
+        user = db_session.query(User).get(user_id)
+        return jsonify({"grade_level": user.grade_level if user else None})
+    finally:
+        db_session.close()
+
+
 # register app.py to new blueprint
 app.register_blueprint(scoring_bp)
 app.register_blueprint(account_bp)

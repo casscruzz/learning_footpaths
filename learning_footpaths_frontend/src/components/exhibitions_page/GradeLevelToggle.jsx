@@ -1,4 +1,6 @@
 import "../../css/App.css";
+import { useEffect } from "react";
+import axios from "axios";
 
 export default function GradeLevelToggle({ selectedGrade, onGradeChange }) {
   const gradeLevelsList = [
@@ -17,9 +19,29 @@ export default function GradeLevelToggle({ selectedGrade, onGradeChange }) {
     { display: "Grade 12", value: "12" },
   ];
 
+  useEffect(() => {
+    // Fetch user's grade level when component mounts
+    const fetchUserGradeLevel = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8888/api/user/grade-level",
+          {
+            withCredentials: true,
+          }
+        );
+        if (response.data.grade_level) {
+          onGradeChange(response.data.grade_level);
+        }
+      } catch (error) {
+        console.error("Error fetching user grade level:", error);
+      }
+    };
+
+    fetchUserGradeLevel();
+  }, [onGradeChange]);
+
   const handleChange = (event) => {
     const value = event.target.value;
-    // If user selects the placeholder, pass null to reset the filter
     onGradeChange(value === "" ? null : value);
   };
 
@@ -32,7 +54,7 @@ export default function GradeLevelToggle({ selectedGrade, onGradeChange }) {
           value={selectedGrade || ""}
           onChange={handleChange}
         >
-          <option value="">Select grade level</option>
+          <option value="">Show All Grade Levels</option>
           {gradeLevelsList.map((grade) => (
             <option key={grade.value} value={grade.value}>
               {grade.display}
