@@ -10,7 +10,8 @@ const ExhibitionCard = ({
   footpathName,
   footpathId,
   isCompleted,
-  selectedGrade, // Add this prop
+  selectedGrade,
+  customBadge, // Add this prop
 }) => {
   const navigate = useNavigate();
 
@@ -32,7 +33,8 @@ const ExhibitionCard = ({
         exhibitionDescription: description,
         footpathName,
         returnPath: "/exhibitions",
-        selectedGrade: selectedGrade || "10", // Add this line
+        selectedGrade: selectedGrade || "10",
+        customBadge, // Pass the custom badge info
       },
     });
   };

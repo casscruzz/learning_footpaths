@@ -6,6 +6,7 @@ export default function ExhibitionCards({
   footpathName,
   completedExhibitions,
   selectedGrade,
+  customBadge, // Add this prop
 }) {
   return (
     <div className={styles.cardHolder}>
@@ -19,6 +20,7 @@ export default function ExhibitionCards({
           footpathId={exhibition.footpathId}
           isCompleted={completedExhibitions?.includes(exhibition.id)}
           selectedGrade={selectedGrade}
+          customBadge={customBadge} // Pass it to the card
         />
       ))}
     </div>

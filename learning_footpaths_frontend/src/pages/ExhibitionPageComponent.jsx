@@ -10,56 +10,33 @@ import ExhibitionCards from "../components/exhibitions_page/ExhibitionCards.jsx"
 
 export default function ExhibitionPageComponent() {
   const location = useLocation();
-  const { selectedFootpath } = location.state || {};
+  const { selectedFootpath, customBadge } = location.state || {};
+
   const [exhibitions, setExhibitions] = useState([]);
   const [filteredExhibitions, setFilteredExhibitions] = useState([]);
-  const [selectedGrade, setSelectedGrade] = useState(null);
+  const [selectedGrade, setSelectedGrade] = useState(
+    customBadge?.grade_level || null
+  );
   const [bigQuestion, setBigQuestion] = useState("");
   const [footpathId, setFootpathId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // fetching completed exhibitions for the current user
   const [completedExhibitions, setCompletedExhibitions] = useState([]);
-
-  // fetching completed exhibitions for the current user
-  useEffect(() => {
-    const fetchCompletedExhibitions = async () => {
-      try {
-        const completedResponse = await axios.get(
-          "http://localhost:8888/api/user/completed-exhibitions",
-          { withCredentials: true }
-        );
-        setCompletedExhibitions(
-          completedResponse.data.map((exhibition) => exhibition.exhibition_id)
-        );
-      } catch (error) {
-        console.error("Error fetching completed exhibitions:", error);
-        setCompletedExhibitions([]);
-      }
-    };
-
-    fetchCompletedExhibitions();
-  }, []);
-  // Add new useEffect to check authentication status
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get("http://localhost:8888/@me", {
-          withCredentials: true,
-        });
-        setIsAuthenticated(true);
-      } catch (error) {
-        setIsAuthenticated(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchExhibitions = async () => {
-      if (selectedFootpath) {
-        try {
+      try {
+        if (customBadge) {
+          // For custom badges, need to fetch updated badge data
+          const response = await axios.get(
+            `http://localhost:8888/api/custom-badge/${customBadge.id}`,
+            { withCredentials: true }
+          );
+          const updatedBadge = response.data;
+          setExhibitions(updatedBadge.exhibitions);
+          setBigQuestion(updatedBadge.description);
+          setFootpathId(updatedBadge.id);
+        } else if (selectedFootpath) {
           const response = await axios.get(
             `http://localhost:8888/api/exhibitions/${selectedFootpath}`,
             { withCredentials: true }
@@ -71,54 +48,79 @@ export default function ExhibitionPageComponent() {
             { withCredentials: true }
           );
           setFootpathId(footpathResponse.data.footpath_id);
-        } catch (error) {
-          console.error("Error fetching exhibitions:", error);
         }
+      } catch (error) {
+        console.error("Error fetching exhibitions:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchExhibitions();
-  }, [selectedFootpath]);
+  }, [selectedFootpath, customBadge]);
 
-  // Add new useEffect for filtering exhibitions
+  // Fetch completed exhibitions
   useEffect(() => {
-    if (selectedGrade) {
-      setFilteredExhibitions(
-        exhibitions.filter((exhibition) =>
-          exhibition.grade_levels.includes(selectedGrade)
-        )
+    const fetchCompletedExhibitions = async () => {
+      try {
+        const response = await axios.get(
+          customBadge
+            ? `http://localhost:8888/api/custom-badge/${customBadge.id}/completed-exhibitions`
+            : "http://localhost:8888/api/user/completed-exhibitions",
+          { withCredentials: true }
+        );
+        setCompletedExhibitions(response.data.map((ex) => ex.exhibition_id));
+      } catch (error) {
+        console.error("Error fetching completed exhibitions:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchCompletedExhibitions();
+    }
+  }, [isAuthenticated, customBadge]);
+
+  // Filter exhibitions by grade level (only for regular footpaths)
+  useEffect(() => {
+    if (customBadge) {
+      setFilteredExhibitions(exhibitions);
+    } else if (selectedGrade) {
+      const filtered = exhibitions.filter((exhibition) =>
+        exhibition.grade_levels.includes(selectedGrade)
       );
+      setFilteredExhibitions(filtered);
     } else {
       setFilteredExhibitions(exhibitions);
     }
-  }, [selectedGrade, exhibitions]);
+  }, [selectedGrade, exhibitions, customBadge]);
 
-  const handleGradeChange = (grade) => {
-    setSelectedGrade(grade);
-  };
+  if (loading) {
+    return <div>Loading exhibitions...</div>;
+  }
 
   return (
     <div>
       <Header />
       <div className="page-container">
         <ExhibitionPageText bigQuestion={bigQuestion} />
-        {isAuthenticated && footpathId && (
+
+        {isAuthenticated && footpathId && !customBadge && (
           <ProgressBarSection footpathId={footpathId} />
         )}
-        <GradeLevelToggle
-          selectedGrade={selectedGrade}
-          onGradeChange={handleGradeChange}
-        />
-        {/* <ExhibitionCards
-          exhibitions={filteredExhibitions}
-          footpathName={selectedFootpath}
-          completedExhibitions={completedExhibitions}
-        /> */}
+
+        {!customBadge && (
+          <GradeLevelToggle
+            selectedGrade={selectedGrade}
+            onGradeChange={setSelectedGrade}
+          />
+        )}
+
         <ExhibitionCards
           exhibitions={filteredExhibitions}
           footpathName={selectedFootpath}
           completedExhibitions={completedExhibitions}
-          selectedGrade={selectedGrade} // Add this prop
+          selectedGrade={selectedGrade}
+          customBadge={customBadge}
         />
       </div>
     </div>

@@ -123,17 +123,23 @@ export default function ExhibitionQuizPage() {
 
     try {
       if (user) {
-        await axios.post(
+        // Save the quiz result
+        const response = await axios.post(
           "http://localhost:8888/api/save-exhibition-progress",
           {
             exhibitionId,
             score: finalScore,
             completed: true,
+            customBadgeId: location.state?.customBadge?.id,
           },
           { withCredentials: true }
         );
+
+        // Update the total score in state if needed
+        if (response.data.total_score !== undefined) {
+          setTotalScore(response.data.total_score);
+        }
       } else {
-        // Ensure footpath info is available
         const footpathId = location.state?.footpathId;
         await saveTempQuizResult(
           exhibitionId,
@@ -146,11 +152,11 @@ export default function ExhibitionQuizPage() {
       setShowPopup(true);
     } catch (error) {
       console.error("Error saving quiz result:", error);
-      // Still show popup even if save fails
       setShowPopup(true);
     }
   };
 
+  // Update the popup section:
   if (isComplete && showPopup) {
     return (
       <div className={styles.popupOverlay}>
@@ -159,11 +165,15 @@ export default function ExhibitionQuizPage() {
           <p>You earned {score} points!</p>
           {user ? (
             <button
-              onClick={() =>
+              onClick={() => {
+                const customBadge = location.state?.customBadge;
                 navigate("/exhibitions", {
-                  state: { selectedFootpath: footpathName },
-                })
-              }
+                  state: customBadge
+                    ? { customBadge }
+                    : { selectedFootpath: footpathName },
+                  replace: true, // This ensures clean navigation
+                });
+              }}
             >
               Return to Exhibitions
             </button>

@@ -1,28 +1,38 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import CompletedBadgeCard from "../components/badges_page/CompletedBadgeCard";
 import IncompleteBadgeCard from "../components/badges_page/IncompleteBadgeCard";
+import CustomBadgeCard from "../components/badges_page/CustomBadgeCard";
 import styles from "../css/badges_page/BadgesDisplay.module.css";
 
-const POINTS_NEEDED = 150; // Match the backend requirement
+const POINTS_NEEDED = 150;
 
 export default function BadgesDisplayPage() {
+  const navigate = useNavigate();
   const [footpathScores, setFootpathScores] = useState([]);
+  const [customBadges, setCustomBadges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBadgeProgress = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8888/api/user/footpath-scores",
-          { withCredentials: true }
-        );
-        setFootpathScores(response.data);
+        const [scoresResponse, customBadgesResponse] = await Promise.all([
+          axios.get("http://localhost:8888/api/user/footpath-scores", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:8888/api/user/custom-badges", {
+            withCredentials: true,
+          }),
+        ]);
+
+        setFootpathScores(scoresResponse.data);
+        setCustomBadges(customBadgesResponse.data);
       } catch (err) {
-        setError("Failed to load badge progress");
-        console.error("Error fetching badge progress:", err);
+        setError("Failed to load badges");
+        console.error("Error fetching badges:", err);
       } finally {
         setLoading(false);
       }
@@ -31,20 +41,20 @@ export default function BadgesDisplayPage() {
     fetchBadgeProgress();
   }, []);
 
+  const handleBadgeClick = (badge, isCustom) => {
+    navigate("/exhibitions", {
+      state: {
+        selectedFootpath: isCustom ? null : badge.footpath_name,
+        customBadge: isCustom ? badge : null,
+      },
+    });
+  };
+
   if (loading) {
     return (
       <div className={styles.container}>
         <Header />
         <div className={styles.loadingState}>Loading your badges...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.container}>
-        <Header />
-        <div className={styles.errorState}>{error}</div>
       </div>
     );
   }
@@ -62,45 +72,52 @@ export default function BadgesDisplayPage() {
       <div className={styles.content}>
         <div className={styles.headerSection}>
           <h1>My Badges</h1>
-          <p className={styles.badgesSummary}>
-            {completedBadges.length} of {footpathScores.length} badges earned
-          </p>
         </div>
 
-        {completedBadges.length > 0 && (
+        {/* Regular Badges */}
+        {(completedBadges.length > 0 || incompleteBadges.length > 0) && (
           <div className={styles.section}>
-            <h2>Earned Badges</h2>
+            <h2>Learning Path Badges</h2>
             <div className={styles.badgeGrid}>
               {completedBadges.map((badge) => (
                 <CompletedBadgeCard
                   key={badge.footpath_id}
                   title={badge.footpath_name}
-                  dateEarned={new Date().toISOString()} // You might want to add actual earned date to your backend
+                  onClick={() => handleBadgeClick(badge, false)}
                 />
               ))}
-            </div>
-          </div>
-        )}
-
-        {incompleteBadges.length > 0 && (
-          <div className={styles.section}>
-            <h2>Badges in Progress</h2>
-            <div className={styles.badgeGrid}>
               {incompleteBadges.map((badge) => (
                 <IncompleteBadgeCard
                   key={badge.footpath_id}
                   title={badge.footpath_name}
                   points={badge.total_score}
                   pointsNeeded={POINTS_NEEDED}
+                  onClick={() => handleBadgeClick(badge, false)}
                 />
               ))}
             </div>
           </div>
         )}
 
-        {footpathScores.length === 0 && (
+        {/* Custom Badges */}
+        {customBadges.length > 0 && (
+          <div className={styles.section}>
+            <h2>Custom Badges</h2>
+            <div className={styles.badgeGrid}>
+              {customBadges.map((badge) => (
+                <CustomBadgeCard
+                  key={badge.id}
+                  badge={badge}
+                  onClick={() => handleBadgeClick(badge, true)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {footpathScores.length === 0 && customBadges.length === 0 && (
           <div className={styles.emptyState}>
-            <p>Start exploring footpaths to earn badges!</p>
+            <p>Start exploring footpaths or create your own badges!</p>
           </div>
         )}
       </div>

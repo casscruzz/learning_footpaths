@@ -8,18 +8,25 @@ from config import ApplicationConfig
 from database import db, SessionLocal  # Base, engine, ,
 from models import (
     User,
-    LearningFootpath,
     Exhibition,
-    Question,
+    GradeLevel,
+    LearningFootpath,
+    CustomBadge,
     UserExhibitionProgress,
+    TempQuizResult,
     footpath_exhibition,
+    Question,
+    exhibition_grade_levels,
+    custom_badge_exhibitions,
 )
+from sqlalchemy.sql import func
+
 from redis import Redis
 from datetime import datetime, timedelta
-from models import TempQuizResult
 import os
 from scoring_utils import get_all_user_footpath_scores
-
+from werkzeug.utils import secure_filename
+import json
 
 from routes.scoring import scoring_bp
 from routes.account_routes import account_bp
@@ -38,18 +45,29 @@ migrate = Migrate(app, db)
 #     resources={r"/*": {"origins": "http://localhost:5173"}},
 #     supports_credentials=True,
 # )
+# cors = CORS(
+#     app,
+#     resources={
+#         r"/*": {
+#             "origins": "http://localhost:5173",
+#             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+#             "allow_headers": ["Content-Type"],
+#             "supports_credentials": True,
+#         }
+#     },
+# )
 cors = CORS(
     app,
     resources={
         r"/*": {
             "origins": "http://localhost:5173",
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type"],
+            "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
+            "expose_headers": ["Content-Range", "X-Content-Range"],
         }
     },
 )
-
 
 bcrypt = Bcrypt(app)
 server_session = FlaskSession(app)
@@ -142,75 +160,6 @@ def register_user():
         db_session.close()
 
 
-# route for logging in
-# @app.route("/login", methods=["POST"])
-# def login_user():
-#     email = request.json["email"]
-#     password = request.json["password"]
-#     session_id = request.json.get("quiz_session_id")  # This might be None
-#     temp_result = None  # Initialize temp_result
-
-#     db_session = SessionLocal()
-#     try:
-#         user = db_session.query(User).filter_by(email=email).first()
-
-#         if user is None or not bcrypt.check_password_hash(user.password, password):
-#             return jsonify({"error": "Unauthorized"}), 401
-
-#         # Only process temp_result if session_id exists
-#         if session_id:
-#             temp_result = (
-#                 db_session.query(TempQuizResult)
-#                 .filter_by(session_id=session_id)
-#                 .first()
-#             )
-
-#             if temp_result:
-#                 existing_progress = (
-#                     db_session.query(UserExhibitionProgress)
-#                     .filter_by(user_id=user.id, exhibition_id=temp_result.exhibition_id)
-#                     .first()
-#                 )
-
-#                 if existing_progress:
-#                     if temp_result.score > existing_progress.score:
-#                         existing_progress.score = temp_result.score
-#                         existing_progress.completed = True
-#                         existing_progress.footpath_id = temp_result.footpath_id
-#                 else:
-#                     new_progress = UserExhibitionProgress(
-#                         user_id=user.id,
-#                         exhibition_id=temp_result.exhibition_id,
-#                         score=temp_result.score,
-#                         completed=True,
-#                         footpath_id=temp_result.footpath_id,
-#                     )
-#                     db_session.add(new_progress)
-
-#                 db_session.commit()
-#                 db_session.delete(temp_result)
-#                 db_session.commit()
-
-#         # Set the session regardless of temp_result
-#         session["user_id"] = user.id
-
-#         # Return response with optional footpath data
-#         return jsonify(
-#             {
-#                 "id": user.id,
-#                 "email": user.email,
-#                 "footpath_name": temp_result.footpath_name if temp_result else None,
-#                 "footpath_id": temp_result.footpath_id if temp_result else None,
-#             }
-#         )
-
-
-#     except Exception as e:
-#         db_session.rollback()
-#         print(f"Login error: {str(e)}")  # For debugging
-#         return jsonify({"error": "Internal server error"}), 500
-#     finally:
-#         db_session.close()
 @app.route("/login", methods=["POST"])
 def login_user():
     email = request.json["email"]
@@ -316,6 +265,7 @@ def get_big_questions():
 def get_exhibitions_by_footpath(footpath_name):
     db_session = SessionLocal()
     try:
+        # Get the footpath
         footpath = (
             db_session.query(LearningFootpath)
             .filter(LearningFootpath.name == footpath_name)
@@ -325,13 +275,12 @@ def get_exhibitions_by_footpath(footpath_name):
         if not footpath:
             return jsonify({"error": "Footpath not found"}), 404
 
-        exhibitions = (
-            db_session.query(Exhibition)
-            .join(footpath_exhibition)
-            .join(LearningFootpath)
-            .filter(LearningFootpath.name == footpath_name)
-            .all()
-        )
+        # Get exhibitions with their grade levels
+        exhibitions = footpath.exhibitions  # Use the relationship directly
+
+        # For debugging
+        print(f"Found footpath: {footpath.name}")
+        print(f"Number of exhibitions found: {len(exhibitions)}")
 
         return jsonify(
             [
@@ -340,10 +289,14 @@ def get_exhibitions_by_footpath(footpath_name):
                     "title": exhibition.title,
                     "description": exhibition.big_question,
                     "grade_levels": [grade.grade for grade in exhibition.grade_levels],
+                    "footpathId": footpath.id,
                 }
                 for exhibition in exhibitions
             ]
         )
+    except Exception as e:
+        print(f"Error in get_exhibitions_by_footpath: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db_session.close()
 
@@ -351,9 +304,8 @@ def get_exhibitions_by_footpath(footpath_name):
 # route for collecting questions for each exhibition
 @app.route("/api/exhibition-questions/<int:exhibition_id>", methods=["GET"])
 def get_exhibition_questions(exhibition_id):
-    grade_level = request.args.get(
-        "grade_level", "10"
-    )  # Default to grade 10 if not specified
+    grade_level = request.args.get("grade_level", "10")
+    print(f"Fetching questions for exhibition {exhibition_id} and grade {grade_level}")
 
     db_session = SessionLocal()
     try:
@@ -363,21 +315,48 @@ def get_exhibition_questions(exhibition_id):
             .all()
         )
 
-        return jsonify(
-            [
-                {
-                    "id": q.id,
-                    "text": q.text,
-                    "option_a": q.option_a,
-                    "option_b": q.option_b,
-                    "option_c": q.option_c,
-                    "option_d": q.option_d,
-                    "correct_answer": q.correct_answer,
-                    "grade_level": q.grade_level,
-                }
-                for q in questions
-            ]
+        # Add debug print
+        print(f"Found {len(questions)} questions")
+
+        result = [
+            {
+                "id": q.id,
+                "text": q.text,
+                "option_a": q.option_a,
+                "option_b": q.option_b,
+                "option_c": q.option_c,
+                "option_d": q.option_d,
+                "correct_answer": q.correct_answer,
+                "grade_level": q.grade_level,
+            }
+            for q in questions
+        ]
+
+        # Return empty list instead of 404 if no questions found
+        return jsonify(result)
+
+    except Exception as e:
+        print(f"Error in get_exhibition_questions: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db_session.close()
+
+
+# Also add a route to get exhibition score (since we saw a 404 for this endpoint)
+@app.route("/api/get-exhibition-score/<int:exhibition_id>", methods=["GET"])
+def get_exhibition_score(exhibition_id):
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"score": 0})
+
+    db_session = SessionLocal()
+    try:
+        progress = (
+            db_session.query(UserExhibitionProgress)
+            .filter_by(user_id=user_id, exhibition_id=exhibition_id)
+            .first()
         )
+        return jsonify({"score": progress.score if progress else 0})
     finally:
         db_session.close()
 
@@ -389,40 +368,65 @@ def save_exhibition_progress():
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 
-    exhibition_id = request.json.get("exhibitionId")
-    score = request.json.get("score")
-    completed = request.json.get("completed")
+    data = request.json
+    exhibition_id = data.get("exhibitionId")
+    score = data.get("score")
+    completed = data.get("completed")
+    custom_badge_id = data.get("customBadgeId")
+
+    if not all([exhibition_id, score is not None]):
+        return jsonify({"error": "Missing required fields"}), 400
 
     db_session = SessionLocal()
     try:
-        # Check if progress already exists
-        existing_progress = (
+        # Check if progress already exists for this exhibition and badge combination
+        progress = (
             db_session.query(UserExhibitionProgress)
-            .filter_by(user_id=user_id, exhibition_id=exhibition_id)
+            .filter_by(
+                user_id=user_id,
+                exhibition_id=exhibition_id,
+                custom_badge_id=custom_badge_id,
+            )
             .first()
         )
 
-        if existing_progress:
-            # Only update if the new score is higher
-            existing_progress.score = max(existing_progress.score, score)
-            existing_progress.completed = completed or existing_progress.completed
+        if progress:
+            # Update existing progress if new score is higher
+            if score > progress.score:
+                progress.score = score
+                progress.completed = completed
         else:
-            # Create new progress record
-            new_progress = UserExhibitionProgress(
+            # Create new progress entry
+            progress = UserExhibitionProgress(
                 user_id=user_id,
                 exhibition_id=exhibition_id,
                 score=score,
                 completed=completed,
+                custom_badge_id=custom_badge_id,
             )
-            db_session.add(new_progress)
+            db_session.add(progress)
 
         db_session.commit()
-        return jsonify(
-            {
-                "status": "success",
-                "score": existing_progress.score if existing_progress else score,
-            }
+
+        # Calculate and return updated total score for the badge
+        total_score = (
+            db_session.query(func.sum(UserExhibitionProgress.score))
+            .filter(
+                UserExhibitionProgress.user_id == user_id,
+                UserExhibitionProgress.custom_badge_id == custom_badge_id,
+            )
+            .scalar()
+            or 0
         )
+
+        return jsonify(
+            {"status": "success", "score": score, "total_score": total_score}
+        )
+
+    except Exception as e:
+        db_session.rollback()
+        print(f"Error saving progress: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db_session.close()
 
@@ -576,6 +580,333 @@ def get_user_grade_level():
     try:
         user = db_session.query(User).get(user_id)
         return jsonify({"grade_level": user.grade_level if user else None})
+    finally:
+        db_session.close()
+
+
+# route to fetch exhibitions by grade level for custom badgemaker
+@app.route("/api/exhibitions-by-grade/<grade_level>", methods=["GET"])
+def get_exhibitions_by_grade(grade_level):
+    db_session = SessionLocal()
+    try:
+        # Get grade level
+        grade = db_session.query(GradeLevel).filter_by(grade=grade_level).first()
+        if not grade:
+            return jsonify({"error": "Grade level not found"}), 404
+
+        # Get all exhibitions for this grade level
+        exhibitions = (
+            db_session.query(Exhibition)
+            .join(exhibition_grade_levels)
+            .filter(exhibition_grade_levels.c.grade_level == grade_level)
+            .all()
+        )
+
+        # For debugging
+        print(f"Found {len(exhibitions)} exhibitions for grade {grade_level}")
+
+        return jsonify(
+            [
+                {
+                    "id": exhibition.id,
+                    "title": exhibition.title,
+                    "description": exhibition.big_question,
+                    "grade_levels": [grade.grade for grade in exhibition.grade_levels],
+                }
+                for exhibition in exhibitions
+            ]
+        )
+    except Exception as e:
+        print(f"Error in get_exhibitions_by_grade: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db_session.close()
+
+
+# route for creating badge
+import os
+from werkzeug.utils import secure_filename
+
+# Add this near your other configurations
+UPLOAD_FOLDER = "static/badge_images"  # Create this directory
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Make sure the upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+@app.route("/api/custom-badges", methods=["POST"])
+def create_custom_badge():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        # Get the file and form data
+        badge_image = request.files.get("badge_image")
+        if not badge_image:
+            return jsonify({"error": "No badge image provided"}), 400
+
+        name = request.form.get("name")
+        description = request.form.get("description")
+        grade_level = request.form.get("grade_level")
+        exhibition_ids = request.form.get("exhibitions")  # This will be a JSON string
+
+        if not all([name, description, grade_level, exhibition_ids]):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Save the image
+        filename = secure_filename(f"{user_id}_{badge_image.filename}")
+        image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        badge_image.save(image_path)
+
+        # Create URL for the badge image
+        badge_image_url = f"/static/badge_images/{filename}"
+
+        db_session = SessionLocal()
+        try:
+            # Create the custom badge
+            new_badge = CustomBadge(
+                name=name,
+                description=description,
+                badge_image_url=badge_image_url,
+                creator_id=user_id,
+                grade_level=grade_level,
+                is_public=True,
+            )
+            db_session.add(new_badge)
+            db_session.flush()  # Get the badge ID
+
+            # Add exhibitions to the badge
+            exhibition_id_list = json.loads(exhibition_ids)
+            exhibitions = (
+                db_session.query(Exhibition)
+                .filter(Exhibition.id.in_(exhibition_id_list))
+                .all()
+            )
+            new_badge.exhibitions.extend(exhibitions)
+
+            db_session.commit()
+            return (
+                jsonify(
+                    {"message": "Badge created successfully", "badge_id": new_badge.id}
+                ),
+                201,
+            )
+
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            db_session.rollback()
+            # If there was an error, try to delete the uploaded file
+            if os.path.exists(image_path):
+                os.remove(image_path)
+            raise
+        finally:
+            db_session.close()
+
+    except Exception as e:
+        print(f"Error creating badge: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+# route to fetch custom badges
+@app.route("/api/user/custom-badges", methods=["GET"])
+def get_user_custom_badges():
+    """Get badges created by the current user with their scores"""
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    db_session = SessionLocal()
+    try:
+        # Get all custom badges
+        badges = db_session.query(CustomBadge).filter_by(creator_id=user_id).all()
+
+        badge_data = []
+        for badge in badges:
+            # Get progress for all exhibitions in this badge
+            total_score = (
+                db_session.query(func.sum(UserExhibitionProgress.score))
+                .filter(
+                    UserExhibitionProgress.user_id == user_id,
+                    UserExhibitionProgress.custom_badge_id == badge.id,
+                )
+                .scalar()
+                or 0
+            )
+
+            badge_data.append(
+                {
+                    "id": badge.id,
+                    "name": badge.name,
+                    "description": badge.description,
+                    "grade_level": badge.grade_level,
+                    "created_at": badge.created_at.isoformat(),
+                    "total_score": total_score,
+                    "exhibitions": [
+                        {
+                            "id": exhibition.id,
+                            "title": exhibition.title,
+                            "score": next(
+                                (
+                                    progress.score
+                                    for progress in exhibition.user_progress
+                                    if progress.user_id == user_id
+                                    and progress.custom_badge_id == badge.id
+                                ),
+                                0,
+                            ),
+                        }
+                        for exhibition in badge.exhibitions
+                    ],
+                }
+            )
+
+        return jsonify(badge_data)
+    finally:
+        db_session.close()
+
+
+@app.route("/api/user/discovered-badges", methods=["GET"])
+def get_discovered_badges():
+    """Get badges discovered/added by the current user"""
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    db_session = SessionLocal()
+    try:
+        user = db_session.query(User).get(user_id)
+        badges = user.discovered_badges
+
+        return jsonify(
+            [
+                {
+                    "id": badge.id,
+                    "name": badge.name,
+                    "description": badge.description,
+                    "badge_image_url": badge.badge_image_url,
+                    "grade_level": badge.grade_level,
+                    "created_at": badge.created_at.isoformat(),
+                    "creator": {"id": badge.creator_id, "email": badge.creator.email},
+                }
+                for badge in badges
+            ]
+        )
+
+    finally:
+        db_session.close()
+
+
+@app.route("/api/explore-badges", methods=["GET"])
+def explore_badges():
+    """Get all public badges for exploration"""
+    grade_level = request.args.get("grade_level")
+
+    db_session = SessionLocal()
+    try:
+        query = db_session.query(CustomBadge).filter_by(is_public=True)
+
+        if grade_level:
+            query = query.filter_by(grade_level=grade_level)
+
+        badges = query.all()
+
+        return jsonify(
+            [
+                {
+                    "id": badge.id,
+                    "name": badge.name,
+                    "description": badge.description,
+                    "badge_image_url": badge.badge_image_url,
+                    "grade_level": badge.grade_level,
+                    "created_at": badge.created_at.isoformat(),
+                    "creator": {"id": badge.creator_id, "email": badge.creator.email},
+                }
+                for badge in badges
+            ]
+        )
+
+    finally:
+        db_session.close()
+
+
+# more routes for custom badges
+@app.route("/api/custom-badge/<int:badge_id>", methods=["GET"])
+def get_custom_badge(badge_id):
+    """Get a single custom badge with its updated exhibitions"""
+    user_id = session.get("user_id")
+
+    db_session = SessionLocal()
+    try:
+        badge = db_session.query(CustomBadge).get(badge_id)
+        if not badge:
+            return jsonify({"error": "Badge not found"}), 404
+
+        # Get progress for each exhibition
+        exhibition_progress = []
+        for exhibition in badge.exhibitions:
+            progress = (
+                db_session.query(UserExhibitionProgress)
+                .filter_by(user_id=user_id, exhibition_id=exhibition.id)
+                .first()
+            )
+            exhibition_data = {
+                "id": exhibition.id,
+                "title": exhibition.title,
+                "description": exhibition.big_question,
+                "score": progress.score if progress else 0,
+                "completed": progress.completed if progress else False,
+            }
+            exhibition_progress.append(exhibition_data)
+
+        return jsonify(
+            {
+                "id": badge.id,
+                "name": badge.name,
+                "description": badge.description,
+                "grade_level": badge.grade_level,
+                "exhibitions": exhibition_progress,
+                "creator_id": badge.creator_id,
+                "created_at": badge.created_at.isoformat(),
+            }
+        )
+
+    finally:
+        db_session.close()
+
+
+@app.route("/api/custom-badge/<int:badge_id>/completed-exhibitions", methods=["GET"])
+def get_custom_badge_progress(badge_id):
+    """Get completed exhibitions for a custom badge"""
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify([])
+
+    db_session = SessionLocal()
+    try:
+        completed = (
+            db_session.query(UserExhibitionProgress)
+            .join(Exhibition)
+            .join(custom_badge_exhibitions)
+            .filter(
+                UserExhibitionProgress.user_id == user_id,
+                UserExhibitionProgress.completed == True,
+                custom_badge_exhibitions.c.custom_badge_id == badge_id,
+            )
+            .all()
+        )
+
+        return jsonify(
+            [
+                {
+                    "exhibition_id": progress.exhibition_id,
+                    "score": progress.score,
+                    "timestamp": progress.timestamp.isoformat(),
+                }
+                for progress in completed
+            ]
+        )
     finally:
         db_session.close()
 
