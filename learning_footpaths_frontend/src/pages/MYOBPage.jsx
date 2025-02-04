@@ -9,7 +9,6 @@ export default function MyobPage() {
   const [selectedGrade, setSelectedGrade] = useState("");
   const [badgeName, setBadgeName] = useState("");
   const [description, setDescription] = useState("");
-  const [badgeImage, setBadgeImage] = useState(null);
   const [exhibitions, setExhibitions] = useState([]);
   const [selectedExhibitions, setSelectedExhibitions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -26,25 +25,19 @@ export default function MyobPage() {
   // Fetch available exhibitions when grade level changes
   useEffect(() => {
     const fetchExhibitions = async () => {
-      if (!selectedGrade) {
-        setExhibitions([]);
-        return;
-      }
+      if (!selectedGrade) return;
 
       try {
         setLoading(true);
         setError("");
-        console.log(`Fetching exhibitions for grade ${selectedGrade}`);
         const response = await axios.get(
           `http://localhost:8888/api/exhibitions-by-grade/${selectedGrade}`,
           { withCredentials: true }
         );
-        console.log("Received exhibitions:", response.data);
         setExhibitions(response.data);
       } catch (err) {
         console.error("Error fetching exhibitions:", err);
         setError(err.response?.data?.error || "Failed to load exhibitions");
-        setExhibitions([]);
       } finally {
         setLoading(false);
       }
@@ -52,10 +45,6 @@ export default function MyobPage() {
 
     fetchExhibitions();
   }, [selectedGrade]);
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    setBadgeImage(file);
-  };
 
   const handleExhibitionToggle = (exhibitionId) => {
     setSelectedExhibitions((prev) => {
@@ -72,27 +61,25 @@ export default function MyobPage() {
     if (
       !badgeName ||
       !description ||
-      !badgeImage ||
       !selectedGrade ||
       selectedExhibitions.length === 0
     ) {
-      setError("Please fill in all required fields");
+      setError(
+        "Please fill in all required fields and select at least one exhibition"
+      );
       return;
     }
 
     try {
-      const formData = new FormData();
-      formData.append("name", badgeName);
-      formData.append("description", description);
-      formData.append("badge_image", badgeImage);
-      formData.append("grade_level", selectedGrade);
-      formData.append("exhibitions", JSON.stringify(selectedExhibitions));
+      const badgeData = {
+        name: badgeName,
+        description: description,
+        grade_level: selectedGrade,
+        exhibitions: selectedExhibitions,
+      };
 
-      await axios.post("http://localhost:8888/api/custom-badges", formData, {
+      await axios.post("http://localhost:8888/api/custom-badges", badgeData, {
         withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
 
       // Redirect to badges page on success
@@ -145,23 +132,6 @@ export default function MyobPage() {
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label>Badge Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className={styles.fileInput}
-            />
-            <a
-              href="/badge-template.png"
-              download
-              className={styles.templateLink}
-            >
-              Download badge template
-            </a>
           </div>
 
           {selectedGrade && (

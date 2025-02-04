@@ -8,6 +8,23 @@ const SlidingMenu = ({ isOpen, onClose, isAuthenticated, onNavigate }) => {
     onNavigate(path);
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:8888/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        onClose();
+        // Redirect to home page after successful logout
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -74,7 +91,7 @@ const SlidingMenu = ({ isOpen, onClose, isAuthenticated, onNavigate }) => {
               </button>
 
               <button
-                onClick={() => handleMenuClick("/logout")}
+                onClick={handleLogout}
                 className={`${styles.menuItem} ${styles.logoutButton}`}
               >
                 Log-out
