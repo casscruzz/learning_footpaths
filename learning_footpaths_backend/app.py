@@ -642,26 +642,14 @@ def create_custom_badge():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        # Get the file and form data
-        badge_image = request.files.get("badge_image")
-        if not badge_image:
-            return jsonify({"error": "No badge image provided"}), 400
-
-        name = request.form.get("name")
-        description = request.form.get("description")
-        grade_level = request.form.get("grade_level")
-        exhibition_ids = request.form.get("exhibitions")  # This will be a JSON string
+        data = request.get_json()
+        name = data.get("name")
+        description = data.get("description")
+        grade_level = data.get("grade_level")
+        exhibition_ids = data.get("exhibitions")
 
         if not all([name, description, grade_level, exhibition_ids]):
             return jsonify({"error": "Missing required fields"}), 400
-
-        # Save the image
-        filename = secure_filename(f"{user_id}_{badge_image.filename}")
-        image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        badge_image.save(image_path)
-
-        # Create URL for the badge image
-        badge_image_url = f"/static/badge_images/{filename}"
 
         db_session = SessionLocal()
         try:
@@ -669,7 +657,6 @@ def create_custom_badge():
             new_badge = CustomBadge(
                 name=name,
                 description=description,
-                badge_image_url=badge_image_url,
                 creator_id=user_id,
                 grade_level=grade_level,
                 is_public=True,
@@ -678,10 +665,9 @@ def create_custom_badge():
             db_session.flush()  # Get the badge ID
 
             # Add exhibitions to the badge
-            exhibition_id_list = json.loads(exhibition_ids)
             exhibitions = (
                 db_session.query(Exhibition)
-                .filter(Exhibition.id.in_(exhibition_id_list))
+                .filter(Exhibition.id.in_(exhibition_ids))
                 .all()
             )
             new_badge.exhibitions.extend(exhibitions)
@@ -697,9 +683,6 @@ def create_custom_badge():
         except Exception as e:
             print(f"Database error: {str(e)}")
             db_session.rollback()
-            # If there was an error, try to delete the uploaded file
-            if os.path.exists(image_path):
-                os.remove(image_path)
             raise
         finally:
             db_session.close()

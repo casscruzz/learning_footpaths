@@ -38,13 +38,13 @@ class CustomBadge(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
-    badge_image_url = Column(String(255), nullable=False)
+    badge_image_url = Column(String(255), nullable=True)  # Changed to nullable=True
     creator_id = Column(String(32), ForeignKey("users.id"), nullable=False)
     grade_level = Column(String(2), ForeignKey("grade_levels.grade"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     is_public = Column(Boolean, default=True)
 
-    # Relationships
+    # Relationships remain the same
     creator = relationship("User", backref="created_badges")
     grade = relationship("GradeLevel")
     exhibitions = relationship(
