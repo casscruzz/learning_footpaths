@@ -40,17 +40,18 @@
 #     finally:
 #         db_session.close()
 
-from flask import Blueprint, jsonify, session
+import logging
+
 from database import SessionLocal
+from flask import Blueprint, jsonify, session
 from models import (
-    User,
-    LearningFootpath,
     Exhibition,
+    LearningFootpath,
+    User,
     UserExhibitionProgress,
     footpath_exhibition,
 )
 from sqlalchemy import func
-import logging
 
 scoring_bp = Blueprint("scoring", __name__)
 
@@ -69,6 +70,7 @@ def get_user_footpath_scores():
                 footpath_exhibition.c.footpath_id,
                 LearningFootpath.name.label("footpath_name"),
                 func.sum(UserExhibitionProgress.score).label("total_score"),
+                func.max(UserExhibitionProgress.timestamp).label("completion_date"),
             )
             .join(
                 UserExhibitionProgress,
@@ -90,6 +92,7 @@ def get_user_footpath_scores():
                 "footpath_id": score[0],
                 "footpath_name": score[1],
                 "total_score": int(score[2] or 0),
+                "completion_date": score[3].isoformat() if score[3] else None,
             }
             for score in user_scores
         ]

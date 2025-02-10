@@ -3,9 +3,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: flex-start;
   margin: 0 auto;
-  padding: 0;
+  padding: 16px;
   width: 100%;
+  max-width: 600px; /* Limit width on larger screens */
+}
+
+.cardHolder > * {
+  width: 100%; /* Make cards take full width */
+  margin-bottom: 16px; /* Add space between cards */
+}
+
+.cardHolder > *:last-child {
+  margin-bottom: 0; /* Remove margin from last card */
 }

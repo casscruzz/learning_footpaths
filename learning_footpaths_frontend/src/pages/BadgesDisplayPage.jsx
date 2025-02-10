@@ -99,6 +99,7 @@ export default function BadgesDisplayPage() {
               <CompletedBadgeCard
                 key={badge.footpath_id}
                 title={badge.footpath_name}
+                dateEarned={badge.completion_date}
                 onClick={() => handleBadgeClick(badge, false)}
               />
             ))}

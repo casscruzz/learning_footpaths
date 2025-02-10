@@ -1,5 +1,65 @@
 .quizContainer {
-  padding: 20px;
+  padding: 76px 16px 20px; /* 60px header + 16px top spacing */
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.quizContainer h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.quizContainer h3 {
+  margin: 0 0 24px 0;
+  font-size: 1.2em;
+  color: #666;
+}
+
+.question {
+  margin-bottom: 24px;
+}
+
+.question p {
+  font-size: 1.1em;
+  line-height: 1.4;
+  margin: 0 0 20px 0;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.options button {
+  width: 100%;
+  padding: 16px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  font-size: 1em;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.options button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.correct {
+  background-color: #4caf50 !important;
+  color: white !important;
+  border-color: #45a049 !important;
+}
+
+.incorrect {
+  background-color: #ff5252 !important;
+  color: white !important;
+  border-color: #ff1744 !important;
 }
 
 .popupOverlay {
@@ -17,68 +77,34 @@
 
 .popupContent {
   background-color: white;
-  padding: 30px;
-  border-radius: 8px;
+  padding: 24px;
+  border-radius: 12px;
   text-align: center;
-  max-width: 400px;
-  width: 80%;
+  max-width: 90%;
+  width: 320px;
+  margin: 16px;
 }
 
 .popupContent h3 {
-  margin-bottom: 20px;
+  margin: 0 0 16px 0;
 }
 
 .popupContent p {
-  margin-bottom: 20px;
+  margin: 0 0 20px 0;
 }
 
 .popupContent button {
-  padding: 10px 20px;
-  margin: 5px;
+  padding: 12px 24px;
+  margin: 4px;
   border: none;
   background-color: #4caf50;
   color: white;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s;
 }
 
 .popupContent button:hover {
   background-color: #45a049;
-}
-
-.question {
-  margin-bottom: 20px;
-}
-
-.options {
-  display: flex;
-  flex-direction: column;
-}
-
-.options button {
-  padding: 10px 20px;
-  margin: 5px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.options button:hover:not(:disabled) {
-  background-color: #e0e0e0;
-}
-
-.correct {
-  background-color: #4caf50 !important;
-  color: white;
-}
-
-.incorrect {
-  background-color: #f44336 !important;
-  color: white;
-}
-
-.options button:disabled {
-  cursor: not-allowed;
 }

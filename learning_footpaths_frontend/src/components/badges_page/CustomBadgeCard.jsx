@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../css/badges_page/IncompleteBadgeCard.module.css"; // Using the same styles
+import styles from "../../css/badges_page/CustomBadgeCard.module.css";
 
 export default function CustomBadgeCard({ badge, onClick }) {
   const POINTS_NEEDED = badge.exhibitions?.length * 50;
@@ -13,7 +13,7 @@ export default function CustomBadgeCard({ badge, onClick }) {
 
   if (isCompleted) {
     return (
-      <div className={styles.card} onClick={onClick}>
+      <div className={`${styles.card} ${styles.completed}`} onClick={onClick}>
         <div className={styles.icon}>🏆</div>
         <h2>{badge.name}</h2>
         <div className={styles.badgeInfo}>

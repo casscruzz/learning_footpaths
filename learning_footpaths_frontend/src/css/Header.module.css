@@ -1,20 +1,25 @@
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   background-color: var(--blue);
-  min-height: 10vh;
+  height: 60px; /* Fixed height instead of vh for consistency */
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   color: white;
-  font-size: 24px;
-  padding: 0 20px;
+  font-size: 18px;
+  padding: 0 16px;
   margin: 0;
 }
 
 .leftSection {
   display: flex;
   align-items: center;
-  gap: 16px; /* This creates space between the menu button and title */
+  gap: 12px;
 }
 
 .menuButton {
@@ -26,12 +31,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px; /* Ensures consistent button width */
+  min-width: 40px;
 }
 
 .title {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -39,7 +44,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px 12px;
 }
 
 .badgeSection:hover {
@@ -48,20 +53,10 @@
 
 .badgeCount {
   color: white;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .trophy {
-  font-size: 24px;
-}
-
-@media (max-width: 600px) {
-  .header {
-    padding: 0 16px;
-  }
-
-  .title {
-    font-size: 20px;
-  }
+  font-size: 20px;
 }

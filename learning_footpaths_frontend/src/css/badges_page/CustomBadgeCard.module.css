@@ -1,0 +1,99 @@
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  text-align: center;
+  animation: bounce 1s infinite;
+}
+
+.card h2 {
+  margin: 0 0 16px 0;
+  color: #2d3748;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+/* Completed badge styles */
+.completed {
+  border: 2px solid #48bb78;
+}
+
+.badgeInfo {
+  text-align: center;
+}
+
+.congratsText {
+  color: #48bb78;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.dateText {
+  color: #718096;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* In-progress badge styles */
+.progressContainer {
+  margin-top: 16px;
+}
+
+.progressBar {
+  height: 8px;
+  background-color: #edf2f7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #4299e1, #63b3ed);
+  transition: width 0.3s ease;
+}
+
+.pointsText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.currentPoints {
+  color: #4299e1;
+  font-weight: 600;
+}
+
+.separator {
+  margin: 0 4px;
+}
+
+.pointsLeft {
+  margin-left: 8px;
+  font-size: 0.8rem;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
