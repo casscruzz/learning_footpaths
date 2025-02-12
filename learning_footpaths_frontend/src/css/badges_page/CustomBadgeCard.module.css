@@ -47,6 +47,23 @@
   margin: 0;
 }
 
+/* Share code styles */
+.shareCode {
+  margin: 12px 0 0 0;
+  padding: 8px;
+  background-color: #f7fafc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #4a5568;
+  text-align: center;
+}
+
+.shareCode span {
+  font-weight: 600;
+  color: #2b6cb0;
+  letter-spacing: 1px;
+}
+
 /* In-progress badge styles */
 .progressContainer {
   margin-top: 16px;
@@ -57,6 +74,7 @@
   background-color: #edf2f7;
   border-radius: 4px;
   overflow: hidden;
+  margin-bottom: 12px;
 }
 
 .progressFill {
@@ -69,7 +87,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 8px;
+  margin-bottom: 12px;
   font-size: 0.9rem;
   color: #718096;
 }
@@ -85,7 +103,8 @@
 
 .pointsLeft {
   margin-left: 8px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  color: #718096;
 }
 
 @keyframes bounce {
@@ -96,4 +115,41 @@
   50% {
     transform: translateY(-4px);
   }
+}
+
+.exhibitionProgress {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.exhibition {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.exhibition:last-child {
+  border-bottom: none;
+}
+
+.exhibitionName {
+  font-size: 0.9rem;
+  color: #4a5568;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.exhibitionScore {
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.exhibitionScore.completed {
+  color: #48bb78;
 }

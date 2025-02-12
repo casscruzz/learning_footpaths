@@ -45,6 +45,7 @@ import logging
 from database import SessionLocal
 from flask import Blueprint, jsonify, session
 from models import (
+    CustomBadge,
     Exhibition,
     LearningFootpath,
     User,
@@ -187,8 +188,8 @@ def get_user_badge_count():
 
     db_session = SessionLocal()
     try:
-        # Get all footpaths and sum of scores for each
-        footpath_scores = (
+        # Get completed footpath badges count
+        footpath_badges = (
             db_session.query(
                 footpath_exhibition.c.footpath_id,
                 func.sum(UserExhibitionProgress.score).label("total_score"),
@@ -201,13 +202,30 @@ def get_user_badge_count():
             .filter(UserExhibitionProgress.user_id == user_id)
             .group_by(footpath_exhibition.c.footpath_id)
             .having(func.sum(UserExhibitionProgress.score) >= POINTS_NEEDED_FOR_BADGE)
-            .all()
+            .count()
         )
 
-        badge_count = len(footpath_scores)
+        # Get completed custom badges count
+        custom_badges = (
+            db_session.query(CustomBadge)
+            .join(
+                UserExhibitionProgress,
+                UserExhibitionProgress.custom_badge_id == CustomBadge.id,
+            )
+            .filter(CustomBadge.creator_id == user_id)
+            .group_by(CustomBadge.id)
+            .having(
+                func.sum(UserExhibitionProgress.score)
+                >= func.count(UserExhibitionProgress.exhibition_id)
+                * 50  # Each exhibition needs 50 points
+            )
+            .count()
+        )
+
+        total_badge_count = footpath_badges + custom_badges
 
         return jsonify(
-            {"badge_count": badge_count, "points_needed": POINTS_NEEDED_FOR_BADGE}
+            {"badge_count": total_badge_count, "points_needed": POINTS_NEEDED_FOR_BADGE}
         )
 
     except Exception as e:

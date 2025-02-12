@@ -1,9 +1,9 @@
-from .user import User
+from .custom_badge import CustomBadge, custom_badge_exhibitions, user_custom_badges
 from .exhibition import Exhibition, GradeLevel, exhibition_grade_levels
 from .footpath import LearningFootpath, footpath_exhibition
-from .custom_badge import CustomBadge, custom_badge_exhibitions, user_custom_badges
+from .progress import TempQuizResult, UserExhibitionProgress
 from .question import Question
-from .progress import UserExhibitionProgress, TempQuizResult
+from .user import User
 
 # This allows you to import any model directly from models
 __all__ = [

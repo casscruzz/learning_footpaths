@@ -5,12 +5,13 @@ export default function IncompleteBadgeCard({
   title,
   points,
   pointsNeeded = 150,
+  onClick,
 }) {
   const pointsLeft = pointsNeeded - points;
   const progressPercentage = (points / pointsNeeded) * 100;
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={onClick}>
       <div className={styles.icon}>🏅</div>
       <h2>{title}</h2>
       <div className={styles.progressContainer}>

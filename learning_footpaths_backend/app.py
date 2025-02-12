@@ -1,36 +1,35 @@
-from flask import Blueprint, Flask, jsonify, request, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_cors import CORS
-from flask_bcrypt import Bcrypt
-from flask_session import Session as FlaskSession
+import json
+import os
+from datetime import datetime, timedelta
+
 from config import ApplicationConfig
-from database import db, SessionLocal  # Base, engine, ,
+from database import SessionLocal, db  # Base, engine, ,
+from flask import Blueprint, Flask, jsonify, request, session
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+from flask_migrate import Migrate
+from flask_session import Session as FlaskSession
+from flask_sqlalchemy import SQLAlchemy
 from models import (
-    User,
+    CustomBadge,
     Exhibition,
     GradeLevel,
     LearningFootpath,
-    CustomBadge,
-    UserExhibitionProgress,
-    TempQuizResult,
-    footpath_exhibition,
     Question,
-    exhibition_grade_levels,
+    TempQuizResult,
+    User,
+    UserExhibitionProgress,
     custom_badge_exhibitions,
+    exhibition_grade_levels,
+    footpath_exhibition,
 )
-from sqlalchemy.sql import func
-
 from redis import Redis
-from datetime import datetime, timedelta
-import os
-from scoring_utils import get_all_user_footpath_scores
-from werkzeug.utils import secure_filename
-import json
-
-from routes.scoring import scoring_bp
 from routes.account_routes import account_bp
-
+from routes.custom_badges import custom_badges_bp
+from routes.scoring import scoring_bp
+from scoring_utils import get_all_user_footpath_scores
+from sqlalchemy.sql import func
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
@@ -625,6 +624,7 @@ def get_exhibitions_by_grade(grade_level):
 
 # route for creating badge
 import os
+
 from werkzeug.utils import secure_filename
 
 # Add this near your other configurations
@@ -726,6 +726,7 @@ def get_user_custom_badges():
                     "grade_level": badge.grade_level,
                     "created_at": badge.created_at.isoformat(),
                     "total_score": total_score,
+                    "share_code": badge.share_code,
                     "exhibitions": [
                         {
                             "id": exhibition.id,
@@ -897,6 +898,7 @@ def get_custom_badge_progress(badge_id):
 # register app.py to new blueprint
 app.register_blueprint(scoring_bp)
 app.register_blueprint(account_bp)
+app.register_blueprint(custom_badges_bp)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import CompletedBadgeCard from "../components/badges_page/CompletedBadgeCard";
 import IncompleteBadgeCard from "../components/badges_page/IncompleteBadgeCard";
 import CustomBadgeCard from "../components/badges_page/CustomBadgeCard";
+import DiscoverBadgeSection from "../components/badges_page/DiscoverBadgeSection";
 import styles from "../css/badges_page/BadgesDisplay.module.css";
 
 const POINTS_NEEDED = 150;
@@ -13,14 +14,19 @@ export default function BadgesDisplayPage() {
   const navigate = useNavigate();
   const [footpathScores, setFootpathScores] = useState([]);
   const [customBadges, setCustomBadges] = useState([]);
+  const [discoveredBadges, setDiscoveredBadges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBadgeProgress = async () => {
       try {
-        // Fetch both footpath scores and custom badges
-        const [footpathResponse, customBadgesResponse] = await Promise.all([
+        // Fetch footpath scores, custom badges, and discovered badges
+        const [
+          footpathResponse,
+          customBadgesResponse,
+          discoveredBadgesResponse,
+        ] = await Promise.all([
           axios.get("http://localhost:8888/api/user/footpath-scores", {
             withCredentials: true,
           }),
@@ -29,16 +35,23 @@ export default function BadgesDisplayPage() {
               withCredentials: true,
             })
             .catch((err) => {
-              // If there's an error fetching custom badges, return empty array
               console.log("No custom badges found");
+              return { data: [] };
+            }),
+          axios
+            .get("http://localhost:8888/api/user/discovered-badges", {
+              withCredentials: true,
+            })
+            .catch((err) => {
+              console.log("No discovered badges found");
               return { data: [] };
             }),
         ]);
 
         setFootpathScores(footpathResponse.data);
         setCustomBadges(customBadgesResponse.data);
+        setDiscoveredBadges(discoveredBadgesResponse.data);
       } catch (err) {
-        // If footpath scores fails, show error
         setError("Failed to load badges");
         console.error("Error fetching badges:", err);
       } finally {
@@ -56,6 +69,11 @@ export default function BadgesDisplayPage() {
         customBadge: isCustom ? badge : null,
       },
     });
+  };
+
+  const handleBadgeDiscovered = (newBadge) => {
+    // Add the new badge to the discoveredBadges list
+    setDiscoveredBadges((prevBadges) => [...prevBadges, newBadge]);
   };
 
   if (loading) {
@@ -91,7 +109,9 @@ export default function BadgesDisplayPage() {
           <h1>My Badges</h1>
         </div>
 
-        {/* Default Learning Path Badges - Always show this section */}
+        <DiscoverBadgeSection onBadgeDiscovered={handleBadgeDiscovered} />
+
+        {/* Default Learning Path Badges */}
         <div className={styles.section}>
           <h2>Learning Path Badges</h2>
           <div className={styles.badgeGrid}>
@@ -115,10 +135,10 @@ export default function BadgesDisplayPage() {
           </div>
         </div>
 
-        {/* Custom Badges - Only show if there are any */}
+        {/* Custom Badges */}
         {customBadges.length > 0 && (
           <div className={styles.section}>
-            <h2>Custom Badges</h2>
+            <h2>Created Badges</h2>
             <div className={styles.badgeGrid}>
               {customBadges.map((badge) => (
                 <CustomBadgeCard
@@ -131,11 +151,32 @@ export default function BadgesDisplayPage() {
           </div>
         )}
 
-        {footpathScores.length === 0 && (
-          <div className={styles.emptyState}>
-            <p>Start exploring footpaths to earn badges!</p>
+        {/* Discovered Badges */}
+        {discoveredBadges.length > 0 && (
+          <div className={styles.section}>
+            <h2>Discovered Badges</h2>
+            <div className={styles.badgeGrid}>
+              {discoveredBadges.map((badge) => (
+                <CustomBadgeCard
+                  key={badge.id}
+                  badge={{
+                    ...badge,
+                    exhibitions: badge.exhibitions || [],
+                  }}
+                  onClick={() => handleBadgeClick(badge, true)}
+                />
+              ))}
+            </div>
           </div>
         )}
+
+        {footpathScores.length === 0 &&
+          customBadges.length === 0 &&
+          discoveredBadges.length === 0 && (
+            <div className={styles.emptyState}>
+              <p>Start exploring footpaths to earn badges!</p>
+            </div>
+          )}
       </div>
     </div>
   );

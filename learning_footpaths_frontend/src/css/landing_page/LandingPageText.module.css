@@ -1,21 +1,29 @@
 .LandingPageText {
   font-size: 1.2em;
   margin: 0;
-  padding: 76px 16px 16px 16px; /* 60px header height + 16px extra space */
+  padding: 76px 16px 0 16px; /* Removed bottom padding since cardHolder has its own */
   text-align: left;
   color: #000000;
   font-family: "Roboto", sans-serif;
+  max-width: 800px; /* Add max-width for better readability */
+  margin: 0 auto; /* Center the content */
+  box-sizing: border-box; /* Include padding in width */
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .LandingPageText h1 {
   margin: 0;
-  font-size: 2em;
+  font-size: 2.5em; /* Increased from 2.25em */
   line-height: 1.2;
+  margin-bottom: 24px; /* Increased space below heading */
+  font-weight: 700; /* Make heading bolder */
 }
 
 .LandingPageSubText {
-  color: grey;
+  color: #4a5568; /* Darker grey for better contrast */
   margin-top: 8px;
-  font-size: 1em;
-  line-height: 1.4;
+  font-size: 1.3em; /* Increased from 1.2em */
+  line-height: 1.5;
+  margin-bottom: 40px; /* Increased space before questions */
+  padding: 0 8px; /* Add some side padding */
 }

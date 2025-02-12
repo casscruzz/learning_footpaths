@@ -5,16 +5,51 @@
   align-items: center;
   justify-content: flex-start;
   margin: 0 auto;
-  padding: 16px;
+  padding: 24px 16px; /* Increased vertical padding */
   width: 100%;
-  max-width: 600px; /* Limit width on larger screens */
+  max-width: 800px; /* Match text container width */
+  box-sizing: border-box; /* Ensure padding is included in width */
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .cardHolder > * {
-  width: 100%; /* Make cards take full width */
-  margin-bottom: 16px; /* Add space between cards */
+  width: calc(100% - 32px); /* Account for padding */
+  margin-bottom: 24px; /* Increased space between cards */
+  padding: 24px 20px; /* Increased padding */
+  background-color: #000; /* Black background */
+  color: #fff; /* White text */
+  border-radius: 12px; /* Rounded corners */
+  font-size: 1.4em; /* Larger text */
+  line-height: 1.5;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word; /* Ensure text wraps */
+  white-space: normal; /* Allow text to wrap */
+  max-width: 100%; /* Ensure content doesn't overflow */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.cardHolder > *:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cardHolder > *:active {
+  transform: translateY(0);
 }
 
 .cardHolder > *:last-child {
   margin-bottom: 0; /* Remove margin from last card */
+}
+
+/* Add responsive font size */
+@media (max-width: 480px) {
+  .cardHolder > * {
+    font-size: 1.25em; /* Slightly larger than before */
+    padding: 20px;
+    width: calc(100% - 16px); /* Slightly smaller margin on mobile */
+  }
 }

@@ -1,4 +1,8 @@
+import random
+import string
 from datetime import datetime
+
+from database import Base, db
 from sqlalchemy import (
     Boolean,
     Column,
@@ -10,7 +14,6 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.orm import relationship
-from database import Base, db
 
 # Association tables
 custom_badge_exhibitions = Table(
@@ -33,6 +36,11 @@ user_custom_badges = Table(
 )
 
 
+def generate_share_code():
+    """Generate a random 5-character code using uppercase letters and numbers"""
+    return "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+
+
 class CustomBadge(Base):
     __tablename__ = "custom_badges"
     id = Column(Integer, primary_key=True)
@@ -42,6 +50,7 @@ class CustomBadge(Base):
     creator_id = Column(String(32), ForeignKey("users.id"), nullable=False)
     grade_level = Column(String(2), ForeignKey("grade_levels.grade"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    share_code = Column(String(5), unique=True)
     is_public = Column(Boolean, default=True)
 
     # Relationships remain the same
@@ -53,6 +62,11 @@ class CustomBadge(Base):
     users = relationship(
         "User", secondary=user_custom_badges, backref="discovered_badges"
     )
+
+    def __init__(self, **kwargs):
+        super(CustomBadge, self).__init__(**kwargs)
+        if not self.share_code:
+            self.share_code = generate_share_code()
 
 
 # Set up the relationship on User model

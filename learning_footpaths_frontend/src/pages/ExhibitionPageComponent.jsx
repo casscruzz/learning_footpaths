@@ -23,6 +23,19 @@ export default function ExhibitionPageComponent() {
   const [completedExhibitions, setCompletedExhibitions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Add authentication check
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await axios.get("http://localhost:8888/@me", { withCredentials: true });
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
   useEffect(() => {
     const fetchExhibitions = async () => {
       try {
