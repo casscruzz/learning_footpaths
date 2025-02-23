@@ -1,6 +1,6 @@
 .exhibition_card {
-  border: 1px solid #ccc; /* Light gray border */
-  border-radius: 8px; /* Rounded corners */
+  border: 2px solid black; /* Light gray border */
+  border-radius: 12px; /* Rounded corners */
   padding: 16px; /* Space inside the card */
   margin: 16px; /* Space outside the card */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
@@ -11,6 +11,7 @@
 
 .exhibition_card:hover {
   transform: translateY(-4px); /* Slight lift on hover */
+  border: 2px solid black;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
 

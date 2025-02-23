@@ -141,8 +141,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
-import styles from "../css/login_page/LoginPage.module.css";
-import "../css/App.css";
+import styles from "../css/register_page/RegisterPage.module.css";
 
 export default function RegisterPageComponent() {
   const [email, setEmail] = useState("");
@@ -193,47 +192,50 @@ export default function RegisterPageComponent() {
   return (
     <div>
       <Header />
-      <div className={styles.loginContainer}>
-        <h1 style={{ textAlign: "center" }}>Register</h1>
-        <div>
-          <h2 style={{ textAlign: "center" }}>Create an account</h2>
-          <form
-            className={styles.loginForm}
-            onSubmit={(e) => {
-              e.preventDefault();
-              registerUser();
-            }}
-          >
-            <div>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="email"
-                onChange={(e) => setEmail(e.target.value)}
-                className={styles.loginInput}
-                required
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="password"
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.loginInput}
-                required
-              />
-            </div>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <button className="button" type="submit">
-              Register
-            </button>
-          </form>
-          <p style={{ textAlign: "center", fontSize: "12px", color: "grey" }}>
-            Already have an account? <a href="/login">Login Now.</a>
-          </p>
+      <div className={styles.registrationContainer}>
+        <h1 className={styles.title}>
+          We're glad to have you here. Let's{" "}
+          <span className={styles.blueText}>create your account</span>!
+        </h1>
+
+        <h2 className={styles.subtitle}>
+          Enter your email and desired password
+        </h2>
+
+        <form
+          className={styles.registrationForm}
+          onSubmit={(e) => {
+            e.preventDefault();
+            registerUser();
+          }}
+        >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={styles.registrationInput}
+            required
+          />
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={styles.registrationInput}
+            required
+          />
+          {error && <div className={styles.error}>{error}</div>}
+          <button type="submit" className={styles.registerButton}>
+            Log-in
+          </button>
+        </form>
+        <div className={styles.loginLink}>
+          <a href="/login">Already have an account? Log-in here instead.</a>
         </div>
       </div>
     </div>

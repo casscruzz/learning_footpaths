@@ -1,0 +1,46 @@
+@import "../variables.css";
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.label {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.2em;
+  color: var(--black);
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.select {
+  font-family: "Work Sans", sans-serif;
+  padding: 12px 24px;
+  font-size: 1em;
+  border-radius: 12px;
+  background-color: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: transform 0.2s ease;
+  min-width: 150px;
+  border: 2px solid #000;
+}
+
+.select:hover {
+  transform: translateY(-2px);
+}
+
+.select:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+.select:focus {
+  outline: none;
+}

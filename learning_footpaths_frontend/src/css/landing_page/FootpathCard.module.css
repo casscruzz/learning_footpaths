@@ -1,10 +1,20 @@
 .footpathButton {
   background-color: black;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   color: white;
   cursor: pointer;
   padding: 10px 20px;
   margin: 10px;
-  width: 100%;
+  /* width: 100%; */
+  width: 348px;
+  height: 107px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  border: 2px solid #000;
+  background: #6dccec;
+  box-shadow: 3px 3px 0px 0px #000;
+  font-family: "Unbounded", sans-serif;
+  color: black;
+  text-align: left;
 }

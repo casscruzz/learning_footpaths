@@ -23,6 +23,8 @@ export default function ExhibitionPageComponent() {
   const [completedExhibitions, setCompletedExhibitions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [selectedExhibition, setSelectedExhibition] = useState(null);
+
   // Add authentication check
   useEffect(() => {
     const checkAuth = async () => {
@@ -115,7 +117,11 @@ export default function ExhibitionPageComponent() {
     <div>
       <Header />
       <div className="page-container">
-        <ExhibitionPageText bigQuestion={bigQuestion} />
+        <ExhibitionPageText
+          bigQuestion={bigQuestion}
+          selectedFootpath={selectedFootpath}
+          customBadge={customBadge}
+        />
 
         {isAuthenticated && footpathId && !customBadge && (
           <ProgressBarSection footpathId={footpathId} />

@@ -1,147 +1,214 @@
 .settingsContainer {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding-top: 60px; /* Match header height */
+  padding: 76px 16px 0 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: "Work Sans", sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .contentWrapper {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  margin: 0px 0px 30px 0px;
+}
+
+.title {
+  font-family: "Unbounded", sans-serif;
+  font-size: 2em;
+  color: var(--black);
+  margin: 0 0 32px 0;
 }
 
 .form {
-  background: white;
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 16px;
 }
 
 .photoSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 32px;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
-.profilePhoto {
-  width: 150px;
-  height: 150px;
+.photoContainer {
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 16px;
-  border: 4px solid var(--blue);
-}
-
-.photoButton {
+  border: 2px solid var(--black);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
   background-color: var(--blue);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
+}
+
+.photoPreview {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.photoLabel {
+  color: var(--black);
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-size: 1em;
+  transition: color 0.2s ease;
+  text-align: center;
 }
 
-.photoButton:hover {
-  background-color: var(--dark-blue);
+.photoLabel:hover {
+  color: var(--blue);
 }
 
-.hiddenInput {
+.photoInput {
   display: none;
 }
 
 .formGroup {
-  margin-bottom: 24px;
+  width: 100%;
 }
 
-.formGroup label {
-  display: block;
-  margin-bottom: 8px;
-  color: #333;
-  font-weight: 500;
+.input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  background-color: var(--white);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
 }
 
-.input,
+.input::placeholder {
+  color: var(--grey);
+}
+
+.input:focus {
+  outline: none;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
 .select {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  background-color: var(--white);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px top 50%;
+  background-size: 12px auto;
 }
 
-.input:focus,
 .select:focus {
   outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
 }
 
 .buttonGroup {
   display: flex;
-  gap: 16px;
-  margin-top: 32px;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 16px;
 }
 
 .saveButton,
 .cancelButton {
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-weight: 500;
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
   cursor: pointer;
-  transition: all 0.2s;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
+  color: var(--black);
 }
 
 .saveButton {
-  background-color: var(--blue);
-  color: white;
-  border: none;
-}
-
-.saveButton:hover {
-  background-color: var(--dark-blue);
+  background-color: var(--green);
 }
 
 .cancelButton {
-  background-color: #fff;
-  color: #666;
-  border: 1px solid #ddd;
+  background-color: var(--blue);
 }
 
+.saveButton:hover,
 .cancelButton:hover {
-  background-color: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.saveButton:active,
+.cancelButton:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
 }
 
 .error {
-  background-color: #fee;
-  color: #c00;
-  padding: 12px;
-  border-radius: 4px;
+  color: var(--red);
+  text-align: center;
   margin-bottom: 16px;
 }
 
+.successMessage {
+  color: var(--green);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2em;
+  color: var(--grey);
+}
+
 @media (max-width: 600px) {
-  .contentWrapper {
-    padding: 16px;
+  .settingsContainer {
+    padding: 76px 8px 0 8px;
   }
 
   .form {
-    padding: 20px;
+    padding: 0 8px;
+    max-width: 100%;
   }
 
-  .buttonGroup {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .saveButton,
-  .cancelButton {
-    width: 100%;
+  .photoContainer {
+    width: 150px;
+    height: 150px;
   }
 
   .input,
-  .select {
-    font-size: 14px;
+  .select,
+  .saveButton,
+  .cancelButton {
+    font-size: 16px;
+    padding: 12px;
   }
 }
 
@@ -191,4 +258,8 @@
 .formGroup:focus-within {
   transform: translateX(4px);
   transition: transform 0.2s ease;
+}
+
+.input {
+  box-sizing: border-box;
 }

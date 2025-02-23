@@ -1,7 +1,21 @@
+.title {
+  font-family: "Unbounded", sans-serif;
+  font-size: 2em;
+  font-weight: 600;
+  color: var(--black);
+  margin: 0 0 16px 0;
+}
+.questionNumber {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1em;
+  color: var(--grey);
+  margin: 0 0 36px 0;
+}
 .quizContainer {
-  padding: 76px 16px 20px; /* 60px header + 16px top spacing */
+  padding: 76px 16px 0 16px;
   max-width: 800px;
   margin: 0 auto;
+  font-family: "Work Sans", sans-serif;
 }
 
 .quizContainer h2 {
@@ -16,50 +30,72 @@
   color: #666;
 }
 
-.question {
+.exhibitionInfo {
+  color: var(--dark-grey);
+  font-size: 1.1em;
   margin-bottom: 24px;
 }
 
-.question p {
-  font-size: 1.1em;
+.question {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin-bottom: 32px;
   line-height: 1.4;
-  margin: 0 0 20px 0;
 }
 
-.options {
+.optionsContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .options button {
   width: 100%;
   padding: 16px;
-  margin: 0;
-  border: 1px solid #ccc;
+  margin: 12px 12px 0 0;
+  border: 2px solid #black;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  /* background-color: white; */
   cursor: pointer;
-  font-size: 1em;
-  text-align: left;
-  transition: all 0.2s ease;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  transition: all 0.3s ease;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
 }
 
-.options button:hover:not(:disabled) {
-  background-color: #e0e0e0;
-  transform: translateY(-1px);
+.option:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
 }
 
 .correct {
-  background-color: #4caf50 !important;
-  color: white !important;
-  border-color: #45a049 !important;
+  background-color: var(--green);
+  color: var(--white);
+  border-color: var(--black);
 }
 
 .incorrect {
-  background-color: #ff5252 !important;
-  color: white !important;
-  border-color: #ff1744 !important;
+  background-color: var(--red);
+  color: var(--white);
+  border-color: var(--black);
+}
+
+.feedback {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.correctFeedback {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+.incorrectFeedback {
+  background-color: var(--red);
+  color: var(--white);
 }
 
 .popupOverlay {
@@ -76,35 +112,78 @@
 }
 
 .popupContent {
-  background-color: white;
-  padding: 24px;
+  background-color: var(--blue);
+  padding: 32px;
   border-radius: 12px;
-  text-align: center;
   max-width: 90%;
-  width: 320px;
+  width: 400px;
   margin: 16px;
+  border: 2px solid var(--black);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
 }
 
-.popupContent h3 {
-  margin: 0 0 16px 0;
+.popupTitle {
+  font-family: "Unbounded", sans-serif;
+  font-size: 2em;
+  color: var(--black);
+  margin: 0 0 24px 0;
+  text-align: left;
+  line-height: 1.2;
 }
 
-.popupContent p {
-  margin: 0 0 20px 0;
+.pointsSection {
+  text-align: center;
+  margin: 32px 0;
 }
 
-.popupContent button {
-  padding: 12px 24px;
-  margin: 4px;
-  border: none;
-  background-color: #4caf50;
-  color: white;
-  border-radius: 6px;
+.pointsText {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.2em;
+  color: var(--black);
+  margin: 0;
+}
+
+.pointsNumber {
+  font-family: "Unbounded", sans-serif;
+  font-size: 4em;
+  color: var(--black);
+  margin: 8px 0;
+  line-height: 1;
+}
+
+.pointsLabel {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.2em;
+  color: var(--black);
+  margin: 0;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.popupButton {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  background-color: var(--green);
+  color: var(--black);
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
   cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.2s;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
 }
 
-.popupContent button:hover {
-  background-color: #45a049;
+.popupButton:hover {
+  transform: translateY(-2px);
+}
+
+.popupButton:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
 }

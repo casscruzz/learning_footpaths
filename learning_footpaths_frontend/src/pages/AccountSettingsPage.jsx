@@ -1,7 +1,3 @@
-// export default function AccountSettingsPage() {
-//   return <div>HUH Account Settings Page</div>;
-// }
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,6 +15,7 @@ export default function AccountSettingsPage() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchUserProfile();
@@ -67,19 +64,31 @@ export default function AccountSettingsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // Update profile information
-      await axios.put("http://localhost:8888/api/account/profile", formData, {
-        withCredentials: true,
-      });
+    setError("");
+    setSuccessMessage("");
+    setLoading(true);
 
-      // If there's a new photo, upload it
+    try {
+      // First update profile data
+      await axios.put(
+        "http://localhost:8888/api/account/profile",
+        {
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          grade_level: formData.grade_level,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      // Then update photo if changed
       if (photo) {
-        const photoData = new FormData();
-        photoData.append("photo", photo);
+        const photoFormData = new FormData();
+        photoFormData.append("photo", photo);
         await axios.post(
           "http://localhost:8888/api/account/profile-photo",
-          photoData,
+          photoFormData,
           {
             withCredentials: true,
             headers: {
@@ -89,9 +98,18 @@ export default function AccountSettingsPage() {
         );
       }
 
-      navigate("/account");
+      setSuccessMessage("Profile updated successfully!");
+
+      // Wait a moment for the server to process the updates
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Navigate back with a state flag to trigger a refresh
+      navigate("/account", { state: { updated: true } });
     } catch (err) {
-      setError("Failed to update profile");
+      console.error("Error updating profile:", err);
+      setError(err.response?.data?.error || "Failed to update profile");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,26 +121,30 @@ export default function AccountSettingsPage() {
       <div className={styles.contentWrapper}>
         <h2>Account Settings</h2>
         {error && <div className={styles.error}>{error}</div>}
+        {successMessage && (
+          <div className={styles.success}>{successMessage}</div>
+        )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.photoSection}>
-            <img
-              src={previewUrl || "/api/placeholder/150/150"}
-              alt="Profile"
-              className={styles.profilePhoto}
+            <div
+              className={styles.photoContainer}
+              style={{
+                backgroundColor: previewUrl ? "transparent" : "var(--blue)",
+                backgroundImage: previewUrl ? `url(${previewUrl})` : "none",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
             />
-            <div className={styles.photoUpload}>
-              <label htmlFor="photo" className={styles.photoButton}>
-                Change Photo
-              </label>
+            <label className={styles.photoLabel}>
+              Change Profile Photo
               <input
                 type="file"
-                id="photo"
                 accept="image/*"
                 onChange={handlePhotoChange}
-                className={styles.hiddenInput}
+                className={styles.photoInput}
               />
-            </div>
+            </label>
           </div>
 
           <div className={styles.formGroup}>
@@ -152,7 +174,6 @@ export default function AccountSettingsPage() {
           <div className={styles.formGroup}>
             <label htmlFor="grade_level">Grade Level</label>
             <select
-              id="grade_level"
               name="grade_level"
               value={formData.grade_level}
               onChange={handleInputChange}

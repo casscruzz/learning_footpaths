@@ -1,7 +1,179 @@
 .accountContainer {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding-top: 60px; /* Match header height */
+  padding: 76px 16px 0 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: "Work Sans", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profileImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: var(--blue);
+  margin-bottom: 24px;
+  border: 2px solid var(--black);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+}
+
+.userName {
+  font-family: "Unbounded", sans-serif;
+  font-size: 2em;
+  color: var(--black);
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.userEmail {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  color: var(--grey);
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.memberSince {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1em;
+  color: var(--black);
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.gradeLevel {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.2em;
+  color: var(--black);
+  margin: 0 0 32px 0;
+  text-align: center;
+  max-width: 400px;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.button {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
+  color: var(--black);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+.editButton {
+  background-color: var(--green);
+}
+
+.badgesButton {
+  background-color: var(--blue);
+}
+
+.deleteButton {
+  background-color: var(--red);
+}
+
+/* Delete Account Popup Styles */
+.deletePopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.deletePopupContent {
+  background-color: var(--red);
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 90%;
+  width: 400px;
+  margin: 16px;
+  border: 2px solid var(--black);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--black);
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: var(--yellow);
+}
+
+.emailConfirmContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+.confirmText {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1em;
+  color: var(--black);
+  margin: 24px 0 16px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.emailInput {
+  width: 80%;
+  padding: 12px;
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  margin: 16px 0;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1em;
+  text-align: center;
+}
+
+.emailInput::placeholder {
+  color: var(--grey);
+}
+
+.error {
+  color: var(--yellow);
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.9em;
+  margin: 8px 0;
+  text-align: center;
 }
 
 .contentWrapper {
@@ -37,21 +209,7 @@
   object-fit: cover;
   border: 4px solid var(--blue);
 }
-.editButton {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 8px 16px;
-  background-color: var(--blue);
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
 
-.editButton:hover {
-  background-color: var(--dark-blue);
-}
 .userInfo {
   flex-grow: 1;
 }
@@ -64,21 +222,7 @@
   margin: 0;
   color: #666;
 }
-.gradeLevel {
-  margin: 0 0 8px 0;
-  color: #666;
-  font-size: 16px;
-}
-.memberSince {
-  margin: 0 0 8px 0;
-  color: #666;
-  font-size: 14px;
-}
-.email {
-  margin: 0;
-  color: #888;
-  font-size: 14px;
-}
+
 .progressSection {
   background: white;
   border-radius: 12px;

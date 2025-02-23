@@ -1,10 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Unbounded:wght@600&family=Work+Sans:wght@400;600&display=swap");
+@import "../variables.css";
+
 .LandingPageText {
   font-size: 1.2em;
   margin: 0;
   padding: 76px 16px 0 16px; /* Removed bottom padding since cardHolder has its own */
   text-align: left;
-  color: #000000;
-  font-family: "Roboto", sans-serif;
+  color: var(--black);
+  font-family: "Work Sans", sans-serif;
   max-width: 800px; /* Add max-width for better readability */
   margin: 0 auto; /* Center the content */
   box-sizing: border-box; /* Include padding in width */
@@ -13,17 +16,24 @@
 
 .LandingPageText h1 {
   margin: 0;
-  font-size: 2.5em; /* Increased from 2.25em */
+  font-size: 3em;
   line-height: 1.2;
-  margin-bottom: 24px; /* Increased space below heading */
-  font-weight: 700; /* Make heading bolder */
+  margin-bottom: 16px;
+  font-weight: 600;
+  font-family: "Unbounded", sans-serif;
 }
 
 .LandingPageSubText {
-  color: #4a5568; /* Darker grey for better contrast */
+  color: var(--black);
   margin-top: 8px;
-  font-size: 1.3em; /* Increased from 1.2em */
+  font-size: 1.2em;
   line-height: 1.5;
-  margin-bottom: 40px; /* Increased space before questions */
-  padding: 0 8px; /* Add some side padding */
+  margin-bottom: 32px; /* Increased space before questions */
+  padding: 0;
+  font-family: "Work Sans", sans-serif;
+}
+
+.userName {
+  color: inherit;
+  font-weight: 600;
 }

@@ -1,133 +1,195 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import styles from "../css/AccountPage.module.css";
 
 export default function AccountPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-  const [footpathScores, setFootpathScores] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [showEmailConfirm, setShowEmailConfirm] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Fetch basic user data
-        const userResponse = await axios.get("http://localhost:8888/@me", {
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8888/@me", {
+        withCredentials: true,
+      });
+      const userDetailsResponse = await axios.get(
+        "http://localhost:8888/api/account/profile",
+        {
           withCredentials: true,
-        });
-        setUser(userResponse.data);
-
-        // Fetch detailed profile data
-        const profileResponse = await axios.get(
-          "http://localhost:8888/api/account/profile",
-          {
-            withCredentials: true,
-          }
-        );
-        setUserProfile(profileResponse.data);
-
-        // Fetch footpath scores
-        const scoresResponse = await axios.get(
-          "http://localhost:8888/api/user/footpath-scores",
-          { withCredentials: true }
-        );
-        setFootpathScores(scoresResponse.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  if (loading) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (!user) {
-    return <div>Please log in to view your account.</div>;
-  }
-
-  const getDisplayName = () => {
-    if (userProfile?.first_name && userProfile?.last_name) {
-      return `${userProfile.first_name} ${userProfile.last_name}`;
-    } else if (userProfile?.first_name) {
-      return userProfile.first_name;
+        }
+      );
+      setUser({ ...response.data, ...userDetailsResponse.data });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      navigate("/login");
     }
-    return user.email;
   };
 
+  useEffect(() => {
+    fetchUserData();
+  }, [navigate, location.state?.updated]);
+
+  const handleDeleteClick = () => {
+    setShowDeletePopup(true);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeletePopup(false);
+    setShowEmailConfirm(false);
+    setConfirmEmail("");
+    setError("");
+  };
+
+  const handleConfirmDelete = async () => {
+    if (confirmEmail !== user.email) {
+      setError("Email does not match");
+      return;
+    }
+
+    try {
+      await axios.delete("http://localhost:8888/api/delete-account", {
+        withCredentials: true,
+        data: { email: confirmEmail },
+      });
+      // Clear session and navigate to home
+      await axios.post(
+        "http://localhost:8888/logout",
+        {},
+        { withCredentials: true }
+      );
+      navigate("/");
+    } catch (error) {
+      console.error("Delete account error:", error);
+      setError(
+        error.response?.data?.error ||
+          "Failed to delete account. Please try again."
+      );
+    }
+  };
+
+  const formatMemberSince = (date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  if (!user) return null;
+
   return (
-    <div className={styles.accountContainer}>
+    <div>
       <Header />
-      <div className={styles.contentWrapper}>
-        <div className={styles.profileSection}>
-          <div className={styles.photoContainer}>
-            <img
-              src={
-                userProfile?.profile_photo
-                  ? `http://localhost:8888/static/profile_photos/${userProfile.profile_photo}`
-                  : "/api/placeholder/150/150"
-              }
-              alt="User Photo"
-              className={styles.profilePhoto}
-            />
-            <div className={styles.editButtonContainer}>
-              <Link to="/accountsettings" className={styles.editButton}>
-                Edit Profile
-              </Link>
-            </div>
-          </div>
-          <div className={styles.userInfo}>
-            <h2>{getDisplayName()}</h2>
-            {userProfile?.grade_level && (
-              <p className={styles.gradeLevel}>
-                Grade {userProfile.grade_level}
-              </p>
-            )}
-            <p className={styles.memberSince}>
-              Member since {new Date().getFullYear()}
-            </p>
-            <p className={styles.email}>{user.email}</p>
-          </div>
+      <div className={styles.accountContainer}>
+        <div
+          className={styles.profileImage}
+          style={{
+            backgroundColor: user.profile_photo ? "transparent" : "var(--blue)",
+            backgroundImage: user.profile_photo
+              ? `url(http://localhost:8888/static/profile_photos/${user.profile_photo})`
+              : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <h1 className={styles.userName}>
+          {user.first_name && user.last_name
+            ? `${user.first_name} ${user.last_name}`
+            : user.email}
+        </h1>
+        <p className={styles.userEmail}>{user.email}</p>
+        {/* <p className={styles.memberSince}>
+          Member since {formatMemberSince(user.created_at)}
+        </p> */}
+        <p className={styles.gradeLevel}>
+          {user.grade_level
+            ? `Grade ${user.grade_level}`
+            : 'Please add your grade level through the "Edit My Profile" button below'}
+        </p>
+
+        <div className={styles.buttonContainer}>
+          <button
+            className={`${styles.button} ${styles.editButton}`}
+            onClick={() => navigate("/accountsettings")}
+          >
+            Edit My Profile
+          </button>
+          <button
+            className={`${styles.button} ${styles.badgesButton}`}
+            onClick={() => navigate("/badges")}
+          >
+            See My Badges
+          </button>
+          <button
+            className={`${styles.button} ${styles.deleteButton}`}
+            onClick={handleDeleteClick}
+          >
+            Delete My Account
+          </button>
         </div>
 
-        <div className={styles.progressSection}>
-          <div className={styles.sectionHeader}>
-            <h3>My Learning Progress</h3>
-            <Link to="/badges" className={styles.viewBadgesLink}>
-              View All Badges
-            </Link>
-          </div>
-          {footpathScores.length > 0 ? (
-            <div className={styles.footpathProgress}>
-              {footpathScores.map((score) => (
-                <div key={score.footpath_id} className={styles.progressCard}>
-                  <h4>{score.footpath_name}</h4>
-                  <div className={styles.scoreInfo}>
-                    <span>Total Points: {score.total_score}</span>
-                    {score.total_score >= 150 && (
-                      <span className={styles.badgeEarned}>
-                        🏆 Badge Earned!
-                      </span>
-                    )}
+        {showDeletePopup && (
+          <div className={styles.deletePopupOverlay}>
+            <div className={styles.deletePopupContent}>
+              <button
+                className={styles.closeButton}
+                onClick={handleCancelDelete}
+              >
+                ×
+              </button>
+              <h2 className={styles.deleteTitle}>
+                Are you sure you want to{" "}
+                <span className={styles.highlightText}>
+                  delete your account
+                </span>
+                ?
+              </h2>
+              {!showEmailConfirm ? (
+                <div className={styles.buttonContainer}>
+                  <button
+                    className={`${styles.button} ${styles.editButton}`}
+                    onClick={handleCancelDelete}
+                  >
+                    No, take me back!
+                  </button>
+                  <button
+                    className={`${styles.button} ${styles.badgesButton}`}
+                    onClick={() => setShowEmailConfirm(true)}
+                  >
+                    Yes, I'm sure
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.emailConfirmContainer}>
+                  <p className={styles.confirmText}>
+                    Enter your email to confirm deleting your account
+                  </p>
+                  <input
+                    type="email"
+                    className={styles.emailInput}
+                    value={confirmEmail}
+                    onChange={(e) => setConfirmEmail(e.target.value)}
+                    placeholder="name@email.com"
+                  />
+                  {error && <p className={styles.error}>{error}</p>}
+                  <div className={styles.buttonContainer}>
+                    <button
+                      className={`${styles.button} ${styles.deleteButton}`}
+                      onClick={handleConfirmDelete}
+                    >
+                      Delete My Account
+                    </button>
                   </div>
                 </div>
-              ))}
+              )}
             </div>
-          ) : (
-            <div className={styles.noProgress}>
-              <p>No learning progress yet. Start exploring footpaths!</p>
-              <Link to="/" className={styles.exploreLink}>
-                Explore Footpaths
-              </Link>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

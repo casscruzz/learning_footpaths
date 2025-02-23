@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background-color: var(--blue);
+  background-color: var(--white);
   height: 60px; /* Fixed height instead of vh for consistency */
   display: flex;
   flex-direction: row;
@@ -25,7 +25,7 @@
 .menuButton {
   background: none;
   border: none;
-  color: white;
+  color: black;
   padding: 8px;
   cursor: pointer;
   display: flex;
@@ -38,6 +38,8 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  color: black;
+  font-family: "Work Sans", sans-serif;
 }
 
 .badgeSection {
@@ -52,7 +54,7 @@
 }
 
 .badgeCount {
-  color: white;
+  color: black;
   font-size: 16px;
   font-weight: 600;
 }

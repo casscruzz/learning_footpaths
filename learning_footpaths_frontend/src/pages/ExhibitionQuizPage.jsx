@@ -161,32 +161,69 @@ export default function ExhibitionQuizPage() {
     return (
       <div className={styles.popupOverlay}>
         <div className={styles.popupContent}>
-          <h3>Quiz Complete!</h3>
-          <p>You earned {score} points!</p>
-          {user ? (
-            <button
-              onClick={() => {
-                const customBadge = location.state?.customBadge;
-                navigate("/exhibitions", {
-                  state: customBadge
-                    ? { customBadge }
-                    : { selectedFootpath: footpathName },
-                  replace: true, // This ensures clean navigation
-                });
-              }}
-            >
-              Return to Exhibitions
-            </button>
-          ) : (
-            <div className={styles.loginButtons}>
-              <button onClick={() => navigate("/login")}>
-                Login to Save Score
-              </button>
-              <button onClick={() => navigate("/register")}>
-                Register to Save Score
-              </button>
-            </div>
-          )}
+          <h2 className={styles.popupTitle}>
+            Yey! You have completed this quiz!
+          </h2>
+          <div className={styles.pointsSection}>
+            <p className={styles.pointsText}>You have earned</p>
+            <div className={styles.pointsNumber}>{score}</div>
+            <p className={styles.pointsLabel}>points</p>
+          </div>
+          <div className={styles.buttonContainer}>
+            {user ? (
+              <>
+                <button
+                  className={styles.popupButton}
+                  onClick={() => {
+                    const customBadge = location.state?.customBadge;
+                    navigate("/exhibitions", {
+                      state: customBadge
+                        ? { customBadge }
+                        : { selectedFootpath: footpathName },
+                      replace: true,
+                    });
+                  }}
+                >
+                  Return to Exhibitions
+                </button>
+                <button
+                  className={styles.popupButton}
+                  onClick={() => navigate("/badges")}
+                >
+                  See My Badges
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className={styles.popupButton}
+                  onClick={() => navigate("/login")}
+                >
+                  Log in to Save My Score
+                </button>
+                <button
+                  className={styles.popupButton}
+                  onClick={() => navigate("/register")}
+                >
+                  Register to Save My Score
+                </button>
+                <button
+                  className={styles.popupButton}
+                  onClick={() => {
+                    const customBadge = location.state?.customBadge;
+                    navigate("/exhibitions", {
+                      state: customBadge
+                        ? { customBadge }
+                        : { selectedFootpath: footpathName },
+                      replace: true,
+                    });
+                  }}
+                >
+                  Return to Exhibitions
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -202,8 +239,8 @@ export default function ExhibitionQuizPage() {
     <div>
       <Header />
       <div className={styles.quizContainer}>
-        <h2>{exhibitionTitle}</h2>
-        <h3>
+        <h2 className={styles.title}>{exhibitionTitle}</h2>
+        <h3 className={styles.questionNumber}>
           Question {currentQuestionIndex + 1} of {questions.length}
         </h3>
         <div className={styles.question}>

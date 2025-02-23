@@ -1,4 +1,4 @@
-import "../../css/App.css";
+import styles from "../../css/exhibitions_page/GradeLevelToggle.module.css";
 import { useEffect } from "react";
 import axios from "axios";
 
@@ -46,22 +46,24 @@ export default function GradeLevelToggle({ selectedGrade, onGradeChange }) {
   };
 
   return (
-    <div>
-      <h3>Grade Levels</h3>
-      <div>
-        <select
-          className="grade-level-select"
-          value={selectedGrade || ""}
-          onChange={handleChange}
-        >
-          <option value="">Show All Grade Levels</option>
-          {gradeLevelsList.map((grade) => (
-            <option key={grade.value} value={grade.value}>
-              {grade.display}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className={styles.container}>
+      <label className={styles.label}>
+        <span>
+          What is your <span className={styles.bold}>Grade Level</span>?
+        </span>
+      </label>
+      <select
+        className={styles.select}
+        value={selectedGrade || ""}
+        onChange={handleChange}
+      >
+        <option value="">All Grades</option>
+        {gradeLevelsList.map((grade) => (
+          <option key={grade.value} value={grade.value}>
+            {grade.display}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
