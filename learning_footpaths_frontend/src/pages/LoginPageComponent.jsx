@@ -7,21 +7,37 @@ import styles from "../css/login_page/LoginPage.module.css";
 export default function LoginPageComponent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSocialLogin = (type) => {
-    navigate("/login", {
+    navigate("/forgot-password", {
       state: {
         message: `Sorry, ${type} login is not available for this prototype`,
       },
     });
   };
 
-  const logInUser = async () => {
+  const logInUser = async (e) => {
+    e.preventDefault();
+    setError("");
+
     try {
+      // First, try to clear any existing session
+      try {
+        await axios.post(
+          "http://localhost:8888/logout",
+          {},
+          { withCredentials: true }
+        );
+      } catch (err) {
+        console.log("No existing session to clear");
+      }
+
       const quiz_session_id = sessionStorage.getItem("quiz_session_id");
       const returnFootpath = sessionStorage.getItem("returnFootpath");
 
+      // Attempt login
       const resp = await axios.post(
         "http://localhost:8888/login",
         {
@@ -34,25 +50,45 @@ export default function LoginPageComponent() {
         }
       );
 
+      // Clear session storage
       sessionStorage.removeItem("quiz_session_id");
       sessionStorage.removeItem("returnFootpath");
 
-      if (resp.data.footpath_name) {
-        navigate("/exhibitions", {
-          state: { selectedFootpath: resp.data.footpath_name },
+      // Verify the session is established
+      try {
+        const userCheck = await axios.get("http://localhost:8888/@me", {
+          withCredentials: true,
         });
-      } else if (returnFootpath) {
-        navigate("/exhibitions", {
-          state: { selectedFootpath: returnFootpath },
-        });
-      } else {
-        navigate("/");
+
+        if (!userCheck.data) {
+          throw new Error("Session not established");
+        }
+
+        // Navigate based on response
+        if (resp.data.footpath_name) {
+          navigate("/exhibitions", {
+            state: { selectedFootpath: resp.data.footpath_name },
+          });
+        } else if (returnFootpath) {
+          navigate("/exhibitions", {
+            state: { selectedFootpath: returnFootpath },
+          });
+        } else {
+          navigate("/");
+        }
+      } catch (sessionError) {
+        console.error("Session verification failed:", sessionError);
+        setError(
+          "Login successful but session not established. Please try again."
+        );
       }
     } catch (error) {
-      if (error.response?.status === 401) {
-        alert("Invalid email or password");
-      }
       console.error("Login error:", error);
+      if (error.response?.status === 401) {
+        setError("Invalid email or password");
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
   };
 
@@ -79,13 +115,7 @@ export default function LoginPageComponent() {
 
         <div className={styles.emailSection}>
           <h2 className={styles.emailTitle}>Log-in with Your Email</h2>
-          <form
-            className={styles.loginForm}
-            onSubmit={(e) => {
-              e.preventDefault();
-              logInUser();
-            }}
-          >
+          <form className={styles.loginForm} onSubmit={logInUser}>
             <input
               type="email"
               id="email"
@@ -106,6 +136,7 @@ export default function LoginPageComponent() {
               className={styles.loginInput}
               required
             />
+            {error && <div className={styles.error}>{error}</div>}
             <div className={styles.forgotPassword}>
               <a href="/forgot-password">Forgot your password?</a>
             </div>

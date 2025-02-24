@@ -146,6 +146,17 @@
   color: var(--blue);
 }
 
+.error {
+  color: var(--red);
+  text-align: center;
+  margin: 8px 0;
+  padding: 12px;
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 600px) {
   .loginContainer {
     padding: 48px 16px 0;

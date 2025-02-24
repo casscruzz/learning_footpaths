@@ -94,7 +94,10 @@ export default function MyobPage() {
     <div className={styles.container}>
       <Header />
       <div className={styles.formContainer}>
-        <h1 className={styles.title}>Create Your Custom Badge</h1>
+        <h1 className={styles.title}>
+          Let's make <span className={styles.italicText}>your own</span>{" "}
+          footpath!
+        </h1>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
@@ -103,7 +106,7 @@ export default function MyobPage() {
               type="text"
               value={badgeName}
               onChange={(e) => setBadgeName(e.target.value)}
-              placeholder="Enter badge name"
+              placeholder="Enter Badge Name"
               className={styles.input}
             />
           </div>
@@ -113,7 +116,7 @@ export default function MyobPage() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter badge description"
+              placeholder="Enter Badge Description"
               className={styles.textarea}
             />
           </div>
@@ -125,7 +128,7 @@ export default function MyobPage() {
               onChange={(e) => setSelectedGrade(e.target.value)}
               className={styles.select}
             >
-              <option value="">Select Grade Level</option>
+              <option value="">Grade Level</option>
               {gradeLevels.map((grade) => (
                 <option key={grade.value} value={grade.value}>
                   {grade.label}

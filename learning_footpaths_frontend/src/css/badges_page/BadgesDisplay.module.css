@@ -1,54 +1,288 @@
 /* BadgesDisplayPage.module.css */
 .container {
   min-height: 100vh;
-  background-color: #f5f7fa;
-  padding-top: 60px; /* Match header height */
+  padding: 76px 16px 0;
+  font-family: "Work Sans", sans-serif;
 }
 
 .content {
-  max-width: 100%; /* Full width for mobile */
+  max-width: 800px;
   margin: 0 auto;
-  padding: 16px;
+  width: 100%;
 }
 
 .headerSection {
-  text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  margin-top: 46px;
 }
 
 .headerSection h1 {
-  font-size: 1.8rem;
-  color: #2d3748;
-  margin: 0;
+  font-family: "Unbounded", sans-serif;
+  font-size: 2.5em;
+  color: var(--black);
+  margin: 0 0 24px 0;
 }
 
-.badgesSummary {
-  color: #718096;
-  font-size: 1rem;
-  margin-top: 8px;
+.navigationButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.navButton {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  background-color: var(--blue);
+  color: var(--black);
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
+}
+
+.navButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.navButton:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+.discoverSection {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+}
+
+.discoverTitle {
+  font-family: "Unbounded", sans-serif;
+  font-size: 1.4em;
+  color: var(--black);
+  margin: 0 0 12px 0;
+}
+
+.discoverDescription {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  color: var(--black);
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.boldText {
+  font-weight: 600;
+}
+
+.codeInput {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  background-color: var(--white);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.codeInput:focus {
+  outline: none;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.addButton {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--black);
+  border-radius: 12px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1.1em;
+  background-color: var(--blue);
+  color: var(--black);
+  cursor: pointer;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease;
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.addButton:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
 }
 
 .section {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
+  scroll-margin-top: 100px;
 }
 
 .section h2 {
-  color: #4a5568;
-  margin-bottom: 16px;
-  font-size: 1.4rem;
+  font-family: "Unbounded", sans-serif;
+  font-size: 1.8em;
+  color: var(--black);
+  margin: 0 0 24px 0;
 }
 
 .badgeGrid {
   display: grid;
-  grid-template-columns: 1fr; /* Single column for mobile */
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
 }
 
-.loadingState,
-.errorState,
-.emptyState {
-  text-align: center;
+.badgeCard {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 12px;
   padding: 24px;
-  color: #718096;
-  font-size: 1rem;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.badgeCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.badgeCard:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+.badgeCard.completed {
+  background-color: var(--green);
+}
+
+.trophyIcon {
+  font-size: 2.5em;
+  animation: bounce 1s infinite;
+  text-align: center;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.badgeTitle {
+  font-family: "Unbounded", sans-serif;
+  font-size: 1.2em;
+  color: var(--black);
+  margin: 0;
+  text-align: center;
+}
+
+.badgeEarned {
+  font-family: "Work Sans", sans-serif;
+  font-weight: 600;
+  color: var(--white);
+  margin: 0;
+  text-align: center;
+}
+
+.badgeDate {
+  font-family: "Work Sans", sans-serif;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9em;
+  margin: 0;
+  text-align: center;
+}
+
+.progressBar {
+  width: 100%;
+  height: 12px;
+  background-color: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green) 0%, var(--blue) 100%);
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  font-family: "Work Sans", sans-serif;
+  color: var(--grey);
+  font-size: 0.9em;
+  margin: 0;
+  text-align: center;
+}
+
+.shareCode {
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-top: 8px;
+  text-align: center;
+  font-family: "Work Sans", sans-serif;
+  font-size: 0.9em;
+}
+
+.shareCode span {
+  color: var(--blue);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.error {
+  color: var(--red);
+  text-align: center;
+  margin: 8px 0;
+  padding: 12px;
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.success {
+  color: var(--green);
+  text-align: center;
+  margin: 8px 0;
+  padding: 12px;
+  background-color: #f0fff4;
+  border: 1px solid #9ae6b4;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 48px 16px 0;
+  }
+
+  .headerSection h1 {
+    font-size: 2em;
+  }
+
+  .badgeGrid {
+    grid-template-columns: 1fr;
+  }
 }
