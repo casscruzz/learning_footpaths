@@ -123,14 +123,17 @@ export default function ExhibitionQuizPage() {
 
     try {
       if (user) {
-        // Save the quiz result
+        // Get customBadgeId from location state
+        const customBadgeId = location.state?.customBadge?.id;
+
+        // Save the quiz result with customBadgeId
         const response = await axios.post(
           "http://localhost:8888/api/save-exhibition-progress",
           {
             exhibitionId,
             score: finalScore,
             completed: true,
-            customBadgeId: location.state?.customBadge?.id,
+            customBadgeId: customBadgeId || null, // Ensure we pass null if no customBadgeId
           },
           { withCredentials: true }
         );

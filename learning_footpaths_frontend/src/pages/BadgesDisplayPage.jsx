@@ -139,7 +139,25 @@ export default function BadgesDisplayPage() {
   };
 
   const renderCustomBadgeCard = (badge) => {
-    const isCompleted = badge.is_completed;
+    if (!badge) return null;
+
+    // Ensure exhibitions array exists and has proper score values
+    const exhibitions = badge.exhibitions || [];
+    const totalExhibitions = exhibitions.length;
+    const pointsNeeded = badge.points_needed || totalExhibitions * 50;
+
+    // Calculate points earned from actual exhibition scores
+    const pointsEarned =
+      badge.total_points ||
+      exhibitions.reduce((total, ex) => {
+        const score = Number(ex.score) || 0;
+        return total + score;
+      }, 0);
+
+    // Calculate if badge is completed
+    const isCompleted =
+      badge.is_completed ||
+      (pointsEarned >= pointsNeeded && totalExhibitions > 0);
 
     return (
       <div
@@ -151,7 +169,9 @@ export default function BadgesDisplayPage() {
           <>
             <div className={styles.badgeEarned}>Badge Earned!</div>
             <div className={styles.badgeDate}>
-              {new Date(badge.completed_at).toLocaleDateString()}
+              {new Date(
+                badge.completed_at || badge.created_at
+              ).toLocaleDateString()}
             </div>
           </>
         ) : (
@@ -160,19 +180,29 @@ export default function BadgesDisplayPage() {
               <div
                 className={styles.progressFill}
                 style={{
-                  width: `${(badge.points_earned / POINTS_NEEDED) * 100}%`,
+                  width: `${Math.min(
+                    (pointsEarned / pointsNeeded) * 100,
+                    100
+                  )}%`,
                 }}
               />
             </div>
             <div className={styles.progressText}>
-              {badge.points_earned}/{POINTS_NEEDED} points (
-              {POINTS_NEEDED - badge.points_earned} points needed)
+              {pointsEarned}/{pointsNeeded} points (
+              {pointsNeeded - pointsEarned} points needed)
+            </div>
+            <div className={styles.exhibitionCount}>
+              {totalExhibitions} exhibition{totalExhibitions !== 1 ? "s" : ""}{" "}
+              to complete
             </div>
           </>
         )}
-        <div className={styles.shareCode}>
-          Share this badge with code: <span>{badge.share_code}</span>
-        </div>
+        {badge.share_code && (
+          <div className={styles.shareCode}>
+            Share this badge with code:{" "}
+            <span className={styles.shareCodeText}>{badge.share_code}</span>
+          </div>
+        )}
       </div>
     );
   };

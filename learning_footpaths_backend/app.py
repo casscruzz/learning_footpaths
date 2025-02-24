@@ -59,11 +59,12 @@ cors = CORS(
     app,
     resources={
         r"/*": {
-            "origins": "http://localhost:5173",
+            "origins": ["http://localhost:5173"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
             "expose_headers": ["Content-Range", "X-Content-Range"],
+            "max_age": 3600,
         }
     },
 )
@@ -760,24 +761,80 @@ def get_discovered_badges():
 
     db_session = SessionLocal()
     try:
-        user = db_session.query(User).get(user_id)
-        badges = user.discovered_badges
+        # Get all badges discovered by the user (excluding their own badges)
+        user = db_session.query(User).filter_by(id=user_id).first()
+        discovered_badges = [
+            badge for badge in user.discovered_badges if badge.creator_id != user_id
+        ]
 
-        return jsonify(
-            [
+        badge_data = []
+        for badge in discovered_badges:
+            # Get progress for all exhibitions in this badge
+            exhibition_progress = (
+                db_session.query(UserExhibitionProgress)
+                .filter(
+                    UserExhibitionProgress.user_id == user_id,
+                    UserExhibitionProgress.custom_badge_id == badge.id,
+                )
+                .all()
+            )
+
+            # Calculate total points earned
+            total_points = sum(progress.score for progress in exhibition_progress)
+
+            # Get completed exhibitions
+            completed_exhibitions = [
+                progress.exhibition_id
+                for progress in exhibition_progress
+                if progress.completed
+            ]
+
+            # Get all exhibitions with their completion status
+            exhibitions_data = []
+            for ex in badge.exhibitions:
+                progress = next(
+                    (p for p in exhibition_progress if p.exhibition_id == ex.id),
+                    None,
+                )
+                exhibitions_data.append(
+                    {
+                        "id": ex.id,
+                        "title": ex.title,
+                        "score": progress.score if progress else 0,
+                        "completed": ex.id in completed_exhibitions,
+                    }
+                )
+
+            # Determine if badge is completed
+            points_needed = badge.points_needed or len(badge.exhibitions) * 50
+            is_completed = total_points >= points_needed
+
+            badge_data.append(
                 {
                     "id": badge.id,
                     "name": badge.name,
                     "description": badge.description,
-                    "badge_image_url": badge.badge_image_url,
                     "grade_level": badge.grade_level,
                     "created_at": badge.created_at.isoformat(),
+                    "share_code": badge.share_code,
                     "creator": {"id": badge.creator_id, "email": badge.creator.email},
+                    "exhibitions": exhibitions_data,
+                    "total_points": total_points,
+                    "points_needed": points_needed,
+                    "is_completed": is_completed,
+                    "completed_at": (
+                        max(p.timestamp for p in exhibition_progress)
+                        if is_completed and exhibition_progress
+                        else None
+                    ),
                 }
-                for badge in badges
-            ]
-        )
+            )
 
+        return jsonify(badge_data)
+
+    except Exception as e:
+        print(f"Error fetching discovered badges: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     finally:
         db_session.close()
 

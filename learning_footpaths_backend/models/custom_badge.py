@@ -52,6 +52,7 @@ class CustomBadge(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     share_code = Column(String(5), unique=True)
     is_public = Column(Boolean, default=True)
+    points_needed = Column(Integer, nullable=False, default=0)
 
     # Relationships remain the same
     creator = relationship("User", backref="created_badges")
@@ -67,6 +68,12 @@ class CustomBadge(Base):
         super(CustomBadge, self).__init__(**kwargs)
         if not self.share_code:
             self.share_code = generate_share_code()
+        # Calculate initial points needed
+        self.update_points_needed()
+
+    def update_points_needed(self):
+        """Update points needed based on number of exhibitions"""
+        self.points_needed = len(self.exhibitions) * 50
 
 
 # Set up the relationship on User model

@@ -47,12 +47,11 @@
   margin: 0;
 }
 
-/* Share code styles */
 .shareCode {
   margin: 12px 0 0 0;
   padding: 8px;
   background-color: #f7fafc;
-  border-radius: 6px;
+  border-radius: 12px;
   font-size: 0.9rem;
   color: #4a5568;
   text-align: center;
@@ -60,7 +59,7 @@
 
 .shareCode span {
   font-weight: 600;
-  color: #2b6cb0;
+  color: var(--blue);
   letter-spacing: 1px;
 }
 

@@ -41,9 +41,10 @@
 #         db_session.close()
 
 import logging
+from datetime import datetime
 
 from database import SessionLocal
-from flask import Blueprint, jsonify, session
+from flask import Blueprint, jsonify, request, session
 from models import (
     CustomBadge,
     Exhibition,
@@ -231,5 +232,59 @@ def get_user_badge_count():
     except Exception as e:
         print(f"Error getting badge count: {str(e)}")
         return jsonify({"error": "Failed to fetch badge count"}), 500
+    finally:
+        db_session.close()
+
+
+@scoring_bp.route("/api/save-exhibition-progress", methods=["POST"])
+def save_exhibition_progress():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json()
+    exhibition_id = data.get("exhibition_id")
+    score = data.get("score")
+    custom_badge_id = data.get("custom_badge_id")  # Get custom_badge_id from request
+
+    if not exhibition_id or score is None:
+        return jsonify({"error": "Missing required data"}), 400
+
+    db_session = SessionLocal()
+    try:
+        # Check if progress already exists
+        progress = (
+            db_session.query(UserExhibitionProgress)
+            .filter(
+                UserExhibitionProgress.user_id == user_id,
+                UserExhibitionProgress.exhibition_id == exhibition_id,
+                UserExhibitionProgress.custom_badge_id
+                == custom_badge_id,  # Include in filter
+            )
+            .first()
+        )
+
+        if progress:
+            # Update existing progress
+            progress.score = score
+            progress.timestamp = datetime.utcnow()
+        else:
+            # Create new progress entry
+            progress = UserExhibitionProgress(
+                user_id=user_id,
+                exhibition_id=exhibition_id,
+                custom_badge_id=custom_badge_id,  # Include in new entry
+                score=score,
+                timestamp=datetime.utcnow(),
+            )
+            db_session.add(progress)
+
+        db_session.commit()
+        return jsonify({"message": "Progress saved successfully"})
+
+    except Exception as e:
+        db_session.rollback()
+        print(f"Error saving progress: {str(e)}")
+        return jsonify({"error": "Failed to save progress"}), 500
     finally:
         db_session.close()
