@@ -12,6 +12,11 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  // click handler for the trophy
+  const handleTrophyClick = () => {
+    navigate("/badges");
+  };
+
   useEffect(() => {
     const checkAuthAndBadges = async () => {
       try {
@@ -54,7 +59,13 @@ export default function Header() {
       {isLoggedIn && (
         <div className={styles.badgeSection}>
           <span className={styles.badgeCount}>{badgeCount}</span>
-          <span className={styles.trophy}>🏆</span>
+          <span
+            className={styles.trophy}
+            onClick={handleTrophyClick}
+            style={{ cursor: "pointer" }}
+          >
+            🏆
+          </span>
         </div>
       )}
 

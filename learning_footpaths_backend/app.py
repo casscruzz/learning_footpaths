@@ -10,19 +10,10 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_session import Session as FlaskSession
 from flask_sqlalchemy import SQLAlchemy
-from models import (
-    CustomBadge,
-    Exhibition,
-    GradeLevel,
-    LearningFootpath,
-    Question,
-    TempQuizResult,
-    User,
-    UserExhibitionProgress,
-    custom_badge_exhibitions,
-    exhibition_grade_levels,
-    footpath_exhibition,
-)
+from models import (CustomBadge, Exhibition, GradeLevel, LearningFootpath,
+                    Question, TempQuizResult, User, UserExhibitionProgress,
+                    custom_badge_exhibitions, exhibition_grade_levels,
+                    footpath_exhibition)
 from redis import Redis
 from routes.account_routes import account_bp
 from routes.custom_badges import custom_badges_bp
@@ -59,7 +50,7 @@ cors = CORS(
     app,
     resources={
         r"/*": {
-            "origins": ["http://localhost:5173"],
+            "origins": ["http://localhost:5173", "http://169.254.119.135:5173", "http://192.168.5.153:5173"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
